@@ -49,21 +49,17 @@
   </div>
 <?php $this->load->view('includes/footer'); ?>
 <script>
-$(document).ready(function () {
-    $('#login_form').validate({
-        onclick: false, // <-- add this option
-        rules: {
-            state: "required"
-        },
-        messages: {
-            state: {
-                required: "The State is required!"
-            }
-        },
-        errorPlacement: function (error, element) {
-            alert(error.text());
-        }
-    });
+$('form').submit(function () {
+    var name = $.trim($('#username').val());
+    var pass = $.trim($('#password').val());
+    if (name  === '') {
+        alert('กรุณาใส่ Username !');
+        return false;
+    }
+    if (pass  === '') {
+        alert('กรุณาใส่ Password !');
+        return false;
+    }
 });
 </script>
 </body>

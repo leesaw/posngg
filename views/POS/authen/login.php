@@ -15,13 +15,15 @@
 <body class="hold-transition login-page">
   <div class="login-box">
     <div class="login-logo">
-      <img src="<?php echo base_url(); ?>asset/dist/img/logo_NGG.png" width="60%"/>
+      <img src="<?php echo base_url(); ?>asset/dist/img/logo_NGG.png" width="50%"/>
       <hr>
-      <b><?php echo version; ?></b>
+      <b><?php echo programname; ?></b>
     </div>
     <!-- /.login-logo -->
     <div class="login-box-body">
       <h3 class="login-box-msg">เข้าสู่ระบบ</h3>
+
+      <?php echo validation_errors(); ?>
 
       <form action="<?php echo site_url("pos_login/verify"); ?>" name="login_form" id="login_form" method="post">
         <div class="form-group has-feedback">
@@ -47,20 +49,13 @@
     </div>
     <!-- /.login-box-body -->
   </div>
+
+  <center><?php echo programname.version; ?> - All rights reserved</center>
+
 <?php $this->load->view('includes/footer'); ?>
 <script>
-$('form').submit(function () {
-    var name = $.trim($('#username').val());
-    var pass = $.trim($('#password').val());
-    if (name  === '') {
-        alert('กรุณาใส่ Username !');
-        return false;
-    }
-    if (pass  === '') {
-        alert('กรุณาใส่ Password !');
-        return false;
-    }
-});
+$(".alert").alert();
+window.setTimeout(function() { $(".alert").alert('close'); }, 2000);
 </script>
 </body>
 </html>

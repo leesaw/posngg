@@ -18,18 +18,22 @@ class Pos_main extends CI_Controller {
 
 	function time_main()
 	{
+		$this->session->set_userdata('sessproducttype', 'time');
+		$this->session->set_userdata('sessproducttypeview', 'นาฬิกา');
 		$data['title'] = programname.version." - Main";
 		$this->load->view('POS/main/main_time_pos', $data);
 	}
 
 	function jewe_main()
 	{
+		$this->session->set_userdata('sessproducttype', 'jewelry');
 		$data['title'] = programname.version." - Out of Service";
 		$this->load->view('POS/main/noservice_view', $data);
 	}
 
 	function gold_main()
 	{
+		$this->session->set_userdata('sessproducttype', 'gold');
 		$data['title'] = programname.version." - Out of Service";
 		$this->load->view('POS/main/noservice_view', $data);
 	}

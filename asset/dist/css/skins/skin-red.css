@@ -66,8 +66,9 @@
   color: #fff;
 }
 .skin-red .sidebar-menu > li.header {
-  color: #4b646f;
+  color: #ffffff;
   background: #1a2226;
+  font-size: 18px;
 }
 .skin-red .sidebar-menu > li > a {
   border-left: 3px solid transparent;

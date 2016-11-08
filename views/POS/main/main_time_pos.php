@@ -3,7 +3,10 @@
 <head>
 <?php $this->load->view('includes/header'); ?>
 <style>
-
+.bigtext {
+  font-weight: bold;
+  font-size: 30px;
+}
 </style>
 </head>
 <body class="skin-red sidebar-mini">
@@ -23,52 +26,66 @@
     <!-- Main content -->
     <section class="content">
       <div class="row">
-        <div class="col-md-9">
+        <div class="col-md-12">
           <div class="box box-solid">
             <div class="box-body">
               <div class="row">
-                <div class="col-lg-12">
+                <div class="col-md-4">
                   <input type='text' class='form-control input-lg' name='barcode' id='barcode' placeholder='สแกนบาร์โค้ด' autocomplete='off'>
                 </div>
+                <div class="col-md-1">
+
+                </div>
+                <div class="col-md-3">
+                    <p class="bigtext">ยอดรวม</p>
+                </div>
+                <div class="col-md-4">
+                    <p class="bigtext" id="summary">0 บาท</p>
+                </div>
               </div>
-              <hr/>
+
               <div class='row'>
-                <div class='col-lg-12 table-responsive'>
-                  <table class='table table-striped'>
-                    <thead><th width='30'>X</th><th width='120'>รูปภาพ</th><th width='150'>Barcode</th><th>สินค้า</th><th width='50'>จำนวน</th><th>ราคาป้าย</th><th width='100'>ส่วนลด (บาท)</th></thead>
+                <div class='col-md-12 table-responsive' style='overflow: auto;height: 400px;'>
+                  <table class='table table-bordered' id='itemlist'>
+                    <thead>
+                      <th class='col-xs-1'>X</th>
+                      <th class='col-xs-1'>รูปภาพ</th>
+                      <th class='col-xs-2'>Barcode</th>
+                      <th class='col-xs-2'>สินค้า</th>
+                      <th class='col-xs-1'>ราคาป้าย</th>
+                      <th class='col-xs-1'>จำนวน</th>
+                      <th class='col-xs-1'>ส่วนลด(บาท)</th>
+                      <th class='col-xs-1'>ส่วนลด(%)</th>
+                      <th class='col-xs-2'>Net</th>
+                    </thead>
                     <tbody></tbody>
                   </table>
                 </div>
+                <div class='col-md-12 table-bordered'>
+                  <table class='table'>
+                    <thead>
+                      <th class='col-xs-4'>รวมทั้งหมด</th>
+                      <th class='col-xs-1'>ราคาป้าย</th>
+                      <th class='col-xs-1'><div id="sum_srp">0</div></th>
+                      <th class='col-xs-1'>จำนวน</th>
+                      <th class='col-xs-1'><div id="allcount">0</div></th>
+                      <th class='col-xs-1'>ส่วนลด</th>
+                      <th class='col-xs-1'><div id="sum_dc">0</div></th>
+                      <th class='col-xs-1'>Net</th>
+                      <th class='col-xs-1'><div id="sum_net">0</div></th>
+                    </thead>
+                    <tbody></tbody>
+                  </table>
+                </div>
+              </div>
+              <div class='row'>
+
               </div>
             </div>
             <!-- /.box-body -->
           </div>
           <!-- /.box -->
         </div>
-        <div class="col-md-3">
-          <div class="box box-primary">
-            <div class="box-body">
-              <div class="row">
-                <div class="col-lg-5">
-                  <p class="lead" style="font-weight: bold;">ยอดรวม</p>
-                </div>
-                <div class="col-lg-7">
-                  <p class="lead" id="summary" style="font-weight: bold;">0 บาท</p>
-                </div>
-              </div>
-              <div class="row">
-                <div class="col-lg-5">
-                  <p class="lead" style="font-weight: bold;">จำนวน</p>
-                </div>
-                <div class="col-lg-7">
-                  <p class="lead" id="allcount" style="font-weight: bold;">0</p>
-                </div>
-              </div>
-            </div>
-            <!-- /.box-body -->
-          </div>
-        </div>
-        <!-- ./col -->
       </div>
       <!-- /.row -->
 
@@ -76,16 +93,7 @@
     <!-- /.content -->
   </div>
   <!-- /.content-wrapper -->
-  <footer class="main-footer">
-    <div class="container">
-      <div class="pull-right hidden-xs">
-        <b>Version</b> <?php echo version; ?>
-      </div>
-      <strong>Copyright &copy; 2016 <?php echo programname; ?></strong> All rights
-      reserved.
-    </div>
-    <!-- /.container -->
-  </footer>
+
 </div>
 <!-- ./wrapper -->
 

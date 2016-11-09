@@ -32,7 +32,7 @@ class Pos_time_item extends CI_Controller {
       $result .= "<td><input type='number' name='it_quantity' id='it_quantity' value='1' style='width: 50px;' onchange='numberWithCommas(this); calculate();'></td>";
       $result .= "<td><input type='number' name='it_discount' id='it_discount' value='0' style='width: 80px;' onchange='calculate();'></td>";
 			$result .= "<td><input type='number' name='it_dc_percent' id='it_dc_percent' value='0' style='width: 50px;' onchange='numberWithCommas(this); calculate();'></td>";
-			$result .= "<td><input type='text' name='it_net' id='it_net' value='".$loop->tiit_srp."' style='text-align: right; font-weight: bold;' disabled></td>";
+			$result .= "<td><input type='text' name='it_net' id='it_net' value='".number_format($loop->tiit_srp, 2, '.', ',')."' style='width: 100px;text-align: right;font-weight: bold;' disabled></td>";
     }
 
     echo $result;

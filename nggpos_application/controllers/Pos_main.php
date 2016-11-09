@@ -18,6 +18,8 @@ class Pos_main extends CI_Controller {
 
 	function time_main()
 	{
+		$this->load->model('province_model','',TRUE);
+		$data['province_array'] = $this->province_model->get_province();
 		$this->session->set_userdata('sessproducttype', 'time');
 		$this->session->set_userdata('sessproducttypeview', 'นาฬิกา');
 		$data['title'] = programname.version." - Main";

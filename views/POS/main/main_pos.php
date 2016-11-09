@@ -25,7 +25,7 @@
         <div class="col-md-4">
           <div class="box box-solid">
             <div class="box-body">
-              <a href="<?php echo site_url("pos_main/time_main"); ?>">
+              <a href="<?php echo site_url("Pos_time_sale/form_sale_order"); ?>">
         	    <div class="thumbnail">
         	      <img src="<?php echo base_url(); ?>asset/dist/img/watch.png" style="width: 200px; padding:5px;">
         	      <div class="caption">

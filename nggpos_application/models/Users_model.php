@@ -3,7 +3,7 @@ Class Users_model extends CI_Model
 {
   function check_username_password($username, $password)
   {
-    $this->db->select('nggu_id, nggu_username, nggu_password, nggu_firstname, nggu_lastname, nggu_position, nggu_shop_id, nggu_company, nggu_status, posh_name');
+    $this->db->select('nggu_id, nggu_number, nggu_username, nggu_password, nggu_firstname, nggu_lastname, nggu_position, nggu_shop_id, nggu_company, nggu_status, posh_name');
     $this->db->from('ngg_users');
     $this->db->join("pos_shop", 'nggu_shop_id = posh_id', 'left');
     $this->db->where('nggu_username', $username);
@@ -16,6 +16,18 @@ Class Users_model extends CI_Model
     } else {
         return false;
     }
+
+  }
+
+  function get_users($where)
+  {
+    $this->db->select('nggu_id, nggu_number, nggu_username, nggu_password, nggu_firstname, nggu_lastname, nggu_position, nggu_shop_id, nggu_company, nggu_status, posh_name');
+    $this->db->from('ngg_users');
+    $this->db->join("pos_shop", 'nggu_shop_id = posh_id', 'left');
+    $this->db->where('nggu_enable', 1);
+    if ($where != "") $this->db->where($where);
+    $this->db->limit(1);
+    return $this->db->get()->result();
 
   }
 

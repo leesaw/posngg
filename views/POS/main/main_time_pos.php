@@ -11,6 +11,10 @@
   font-weight: bold;
   font-size: 20px;
 }
+.totalvalue {
+  font-weight: bold;
+  font-size: 16px;
+}
 </style>
 </head>
 <body class="hold-transition skin-red layout-top-nav">
@@ -37,7 +41,7 @@
         </div>
         <div class='col-md-6'></div>
         <div class='col-md-2'>
-          <a type='button' class='btn bg-purple' href='<?php echo site_url('pos_main'); ?>'>เลือกประเภทสินค้า</a>
+          <a type='button' class='btn bg-purple' id='btnSelectProductType' href='<?php echo site_url('pos_main'); ?>'>เลือกประเภทสินค้า</a>
         </div>
         <div class='col-md-2'></div>
       </div>
@@ -84,15 +88,15 @@
                 <div class='col-md-12 table-responsive'>
                   <table class='table table-bordered'>
                     <thead>
-                      <th class='col-xs-4'>รวมทั้งหมด</th>
-                      <th class='col-xs-1 text-blue'>ราคาป้าย</th>
-                      <th class='col-xs-1 text-blue'><div id="sum_srp">0</div></th>
-                      <th class='col-xs-1 text-green'>จำนวน</th>
-                      <th class='col-xs-1 text-green'><div id="allcount">0</div></th>
-                      <th class='col-xs-1 text-yellow'>ส่วนลด</th>
-                      <th class='col-xs-1 text-yellow'><div id="sum_dc">0</div></th>
-                      <th class='col-xs-1 text-red'>Net</th>
-                      <th class='col-xs-1 text-red'><div id="sum_net">0</div></th>
+                      <th class='col-xs-2 totalvalue'>รวมทั้งหมด</th>
+                      <th class='col-xs-1 totalvalue text-blue'>ป้าย</th>
+                      <th class='col-xs-1 totalvalue text-blue'><div id="sum_srp">0</div></th>
+                      <th class='col-xs-1 totalvalue text-green'>จำนวน</th>
+                      <th class='col-xs-1 totalvalue text-green'><input type="hidden" id="var_allcount" value="0"/><div id="allcount">0</div></th>
+                      <th class='col-xs-1 totalvalue text-yellow'>ส่วนลด</th>
+                      <th class='col-xs-1 totalvalue text-yellow'><div id="sum_dc">0</div></th>
+                      <th class='col-xs-2 totalvalue text-red'>ส่วนลดท้ายบิล <a data-toggle="modal" data-target="#modDCTopup" type="button" class="btn btn-danger btn-xs" name="btnDCTopup" id="btnDCTopup"><i class='fa fa-plus'></i></a></th>
+                      <th class='col-xs-2 totalvalue text-red'><input type="hidden" id="hiddenDCTopup" value=""/><div id="dc_topup">0</div></th>
                     </thead>
                     <tbody></tbody>
                   </table>
@@ -126,6 +130,7 @@
                   </div>
                   <div class='col-md-12'>
                     ชื่อ-นามสกุล
+                    <input type='hidden' name='customer_id' id='customer_id' value='0'>
                     <input type='text' name='cusName_view' id='cusName_view' class='form-control' value='' disabled>
                   </div>
                   <div class='col-md-12'>
@@ -148,6 +153,7 @@
                 <div class='col-md-5'>
                   รหัสพนักงาน
                   <div class="form-group has-feedback">
+                    <input type='hidden' name='saleperson_id' id='saleperson_id' value='<?php echo $nggu_id; ?>'>
                     <input type='text' name='staffCode' id='staffCode' class='form-control' value='<?php echo $nggu_number; ?>'>
                     <span class="form-control-feedback"><i class="fa fa-search" aria-hidden="true"></i></span>
                   </div>
@@ -176,6 +182,7 @@
 <!-- Modal section-->
 <?php $this->load->view('includes/modal_new_customer'); ?>
 <?php $this->load->view('includes/modal_payment'); ?>
+<?php $this->load->view('includes/modal_discount_topup'); ?>
 <!-- ./Modal section-->
 
 <?php $this->load->view('includes/footer'); ?>
@@ -186,6 +193,7 @@
   var link_saleperson = '<?php echo site_url('pos_sale_person/check_sale_person'); ?>';
   var link_customer = '<?php echo site_url('pos_customer/check_customer'); ?>';
   var link_new_customer = '<?php echo site_url('pos_customer/save_new_customer'); ?>';
+  var link_save_payment = '<?php echo site_url('pos_payment/save_new_payment'); ?>';
 </script>
 </body>
 </html>

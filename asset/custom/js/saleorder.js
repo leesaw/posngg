@@ -39,7 +39,38 @@ var count_list = 0;
 				}
 		});
 
+    $('#valueDCTopup').keyup(function(e){ //enter next
+        if(e.keyCode == 13) {
+          if($("#valueDCTopup").val() != "") {
+            document.getElementById("dc_topup").innerHTML = parseFloat($("#valueDCTopup").val()).toFixed(2);
+            $("#hiddenDCTopup").val($("#valueDCTopup").val());
+          }
+          $("#valueDCTopup").val('');
+          $('#modDCTopup').modal('toggle');
+          setTimeout(function(){
+                    calculate();
+                },300);
+				}
+		});
+
     $(document).ready(function() {
+      $("#btnConfirmDCTopup").click(function() {
+        if($("#valueDCTopup").val() != "") {
+          document.getElementById("dc_topup").innerHTML = parseFloat($("#valueDCTopup").val()).toFixed(2);
+          $("#hiddenDCTopup").val($("#valueDCTopup").val());
+        }
+        $("#valueDCTopup").val('');
+        $('#modDCTopup').modal('toggle');
+        setTimeout(function(){
+                  calculate();
+              },300);
+      });
+
+      $("#btnSelectProductType").click(function() {
+        var message = "ต้องการให้ข้อมูลทั้งหมดในหน้านี้ ถูกลบใช่หรือไม่ !";
+        return confirm(message);
+      });
+
       $("#btnSaveCustomer").click(function() {
         if ($("#cusTelephone").val()=="") {
           alert("กรุณาใส่ เบอร์ติดต่อลูกค้า !");
@@ -75,26 +106,118 @@ var count_list = 0;
     	        }else{
     	        	alert("ไม่สามารถ บันทึกข้อมูลลูกค้าได้ !");
     	        }
-    				}
+    				},
+            error: function (textStatus, errorThrown) {
+                alert("เกิดความผิดพลาด !!!");
+                $("#btnSaveCustomer").attr('disabled', false);
+            }
     			});
         }
       });
 
       $("#btnPayment").click(function() {
-        var count = 0, sum = 0;
-        var srp = document.getElementsByName('it_srp');
-        var qty = document.getElementsByName('it_quantity');
-        var dc = document.getElementsByName('it_discount');
-        var net = document.getElementsByName('it_net');
-        var dc_percent = document.getElementsByName('it_dc_percent');
-        for(var i=0; i<qty.length; i++) {
-            count += parseFloat(qty[i].value);
-            sum += parseFloat(qty[i].value)*parseFloat(srp[i].value) - parseFloat((dc[i].value).replace(/,/g, ''));
+        if ($("#var_allcount").val() < 1) {
+          alert("กรุณา สแกนบาร์โค้ด เพื่อเลือกสินค้า");
+          $("#barcode").focus();
+          return false;
+        }else if ($("#saleperson_id").val()<1) {
+          alert("กรุณาใส่ รหัสพนักงานขาย !");
+          $("#staffCode").focus();
+          return false;
+        }else{
+          var count = 0, sum = 0;
+          var srp = document.getElementsByName('it_srp');
+          var qty = document.getElementsByName('it_quantity');
+          var dc = document.getElementsByName('it_discount');
+          var net = document.getElementsByName('it_net');
+          var dc_percent = document.getElementsByName('it_dc_percent');
+          var dc_topup = $("#hiddenDCTopup").val();
+          for(var i=0; i<qty.length; i++) {
+              count += parseFloat(qty[i].value);
+              sum += parseFloat(qty[i].value)*parseFloat(srp[i].value) - parseFloat((dc[i].value).replace(/,/g, ''));
+          }
+          sum -= dc_topup;
+          document.getElementById("totalPrice").value = sum.toFixed(2).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + " บาท";
+          document.getElementById("totalCount").value = count.toString().replace(/\B(?=(\d{3})+(?!\d))/g, "," );
         }
-        document.getElementById("totalPrice").value = sum.toFixed(2).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + " บาท";
-        document.getElementById("totalCount").value = count.toString().replace(/\B(?=(\d{3})+(?!\d))/g, "," );
+      });
 
-        
+      $("#btnConfirmPayment").click(function(){
+        if ($("#paymentValue").val()=="") {
+          alert("กรุณาใส่ จำนวนเงินที่ชำระ !");
+          $("#paymentValue").focus();
+        }else{
+          $("#btnConfirmPayment").prop('disabled', true);
+
+          var item_id = document.getElementsByName('it_id');
+          var item_barcode = document.getElementsByName('it_barcode');
+          var srp = document.getElementsByName('it_srp');
+          var qty = document.getElementsByName('it_quantity');
+          var dc = document.getElementsByName('it_discount');
+          var net = document.getElementsByName('it_net');
+          var dc_percent = document.getElementsByName('it_dc_percent');
+          var dc_topup = $("#hiddenDCTopup").val();
+
+          // create item array
+          var item_array = new Array();
+          var total_net = 0;
+          var total_dc = 0;
+          var total_tax = 0;
+          for(var i=0; i<item_id.length; i++) {
+            total_net += net[i].value;
+            total_dc += dc[i].value;
+            item_array[i] = {  id: item_id[i].value,
+                              barcode: item_barcode[i].value,
+                              srp: srp[i].value,
+                              qty: qty[i].value,
+                              dc_baht: dc[i].value,
+                              dc_percent: dc_percent[i].value,
+                              net: net[i].value,
+                            };
+          }
+          total_tax = total_net*0.07/1.07;
+          var payment = { paymentWay: $("#paymentWay").val(),
+                          paymentValue: $("#paymentValue").val(),
+                          paymentRemark: $("#paymentRemark").val(),
+                          customer_id: $("#customer_id").val(),
+                          saleperson_id: $("#saleperson_id").val(),
+                          dc_topup: dc_topup,
+                          total_net: total_net,
+                          total_dc: total_dc,
+                          total_tax: total_tax,
+                        };
+
+          $.ajax({
+    				type : "POST" ,
+    				url : link_save_payment ,
+    				data : {item: item_array, payment: payment} ,
+    				success : function(data) {
+    					if(data)
+    					{
+                alert("ทำการบันทึกข้อมูลเรียบร้อยแล้ว !");
+
+                $('#cusName_view').val($("#cusName").val());
+                var jungwat = " ";
+                if($("#cusProvince").val()!="กรุงเทพมหานคร") jungwat = " จ.";
+                $('#cusAddress_view').val($("#cusAddress").val() + jungwat + $("#cusProvince").val());
+                $('#cusTaxID_view').val($("#cusTaxID").val());
+                $('#cusTelephone_view').val($("#cusTelephone").val());
+
+                $("#paymentWay").val("");
+                $("#paymentValue").val("");
+                $("#btnConfirmPayment").attr('disabled', false);
+
+    	        }else{
+    	        	alert("ไม่สามารถ บันทึกข้อมูลได้ !");
+    	        }
+    				},
+            error: function (textStatus, errorThrown) {
+                alert("เกิดความผิดพลาด !!!");
+                $("#btnConfirmPayment").attr('disabled', false);
+            }
+    			});
+        }
+
       });
     });
 
@@ -116,11 +239,13 @@ var count_list = 0;
                 setTimeout(function(){
                           calculate();
                       },300);
-  	            //document.getElementById("total_net").innerHTML = "จำนวน &nbsp&nbsp "+count_list+"   &nbsp&nbsp รายการ";
   	        }else{
   	        	alert("ไม่พบ Barcode ที่ต้องการ");
   	        }
-  				}
+  				},
+          error: function (textStatus, errorThrown) {
+              alert("เกิดความผิดพลาด !!!");
+          }
   			});
     	}
 
@@ -137,12 +262,22 @@ var count_list = 0;
   				success : function(data) {
   					if(data.nggu_id > 0)
   					{
+              $('#saleperson_id').val(data.nggu_id);
               $('#staffName').val(data.nggu_name);
               $('#staffCode').val(data.nggu_number);
   	        }else{
   	        	alert("ไม่พบ รหัสพนักงาน ที่ต้องการ");
+              $('#saleperson_id').val('0');
+              $('#staffName').val('');
+              $('#staffCode').val('');
   	        }
-  				}
+  				},
+          error: function (textStatus, errorThrown) {
+              alert("ไม่พบ รหัสพนักงาน ที่ต้องการ !!!");
+              $('#saleperson_id').val('0');
+              $('#staffName').val('');
+              $('#staffCode').val('');
+          }
   			});
     	}
     }
@@ -158,13 +293,27 @@ var count_list = 0;
   				success : function(data) {
   					if(data.posc_id > 0)
   					{
+              $('#customer_id').val(data.posc_id);
               $('#cusName_view').val(data.posc_name);
               $('#cusAddress_view').val(data.posc_address);
               $('#cusTaxID_view').val(data.posc_taxid);
   	        }else{
   	        	alert("ไม่พบ ข้อมูลลูกค้า ที่ต้องการ");
+              $('#customer_id').val('0');
+              $('#cusTelephone_view').val('');
+              $('#cusName_view').val('');
+              $('#cusAddress_view').val('');
+              $('#cusTaxID_view').val('');
   	        }
-  				}
+  				},
+          error: function (textStatus, errorThrown) {
+              alert("ไม่พบ ข้อมูลลูกค้า ที่ต้องการ !!!");
+              $('#customer_id').val('0');
+              $('#cusTelephone_view').val('');
+              $('#cusName_view').val('');
+              $('#cusAddress_view').val('');
+              $('#cusTaxID_view').val('');
+          }
   			});
     	}
     }
@@ -176,6 +325,7 @@ var count_list = 0;
         var dc = document.getElementsByName('it_discount');
         var net = document.getElementsByName('it_net');
         var dc_percent = document.getElementsByName('it_dc_percent');
+        var dc_topup = $("#hiddenDCTopup").val();
         for(var i=0; i<qty.length; i++) {
             if (dc[i].value == "") dc[i].value = 0;
             if (qty[i].value == "") qty[i].value = 0;
@@ -196,11 +346,12 @@ var count_list = 0;
             sum += parseFloat(qty[i].value)*parseFloat(srp[i].value) - parseFloat((dc[i].value).replace(/,/g, ''));
             net[i].value = (parseFloat(qty[i].value)*parseFloat(srp[i].value) - parseFloat((dc[i].value).replace(/,/g, ''))).toFixed(2).toString().replace(/\B(?=(\d{3})+(?!\d))/g, "," );
         }
+        sum -= dc_topup;
         document.getElementById("summary").innerHTML = sum.toFixed(2).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + " บาท";
         document.getElementById("allcount").innerHTML = count.toString().replace(/\B(?=(\d{3})+(?!\d))/g, "," );
         document.getElementById("sum_srp").innerHTML = sum_srp.toFixed(2).toString().replace(/\B(?=(\d{3})+(?!\d))/g, "," );
         document.getElementById("sum_dc").innerHTML = sum_dc.toFixed(2).toString().replace(/\B(?=(\d{3})+(?!\d))/g, "," );
-        document.getElementById("sum_net").innerHTML = sum.toFixed(2).toString().replace(/\B(?=(\d{3})+(?!\d))/g, "," );
+        $('#var_allcount').val(count);
     }
 
     function delete_item_row(row1)

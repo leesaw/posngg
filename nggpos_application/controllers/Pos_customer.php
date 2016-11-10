@@ -17,7 +17,7 @@ class Pos_customer extends CI_Controller {
   function check_customer()
 	{
 		$telephone = $this->input->post("telephone");
-		$where = "posc_telephone like '%".$telephone."%' and posc_enable = 1";
+		$where = "posc_telephone like '".$telephone."' and posc_enable = 1";
 		$this->load->model('pos_customer_model','',TRUE);
 		$query = $this->pos_customer_model->get_customer($where);
 		foreach($query as $loop) {

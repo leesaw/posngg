@@ -26,8 +26,12 @@
             </select></div>
           </div>
           <div class="form-group">
-						<label class="col-md-4 control-label" for="paymentValue">จำนวนเงินที่ชำระ</label>
+						<label class="col-md-4 control-label" for="paymentValue">จำนวนเงินที่ชำระ <font class='text-red'>*</font></label>
 						<div class="col-md-8"> <input type="text" class="form-control input-lg" id="paymentValue" name="paymentValue" value="" /></div>
+          </div>
+          <div class="form-group">
+						<label class="col-md-4 control-label" for="paymentRemark">หมายเหตุ </label>
+						<div class="col-md-8"> <input type="text" class="form-control input-lg" id="paymentRemark" name="paymentRemark" value="" /></div>
           </div>
 
           </div>            <!-- /modal-body -->

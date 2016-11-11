@@ -164,15 +164,15 @@ var count_list = 0;
           var total_dc = 0;
           var total_tax = 0;
           for(var i=0; i<item_id.length; i++) {
-            total_net += net[i].value;
-            total_dc += dc[i].value;
+            total_net += parseFloat((net[i].value).replace(/,/g, ''));
+            total_dc += parseFloat((dc[i].value).replace(/,/g, ''));
             item_array[i] = {  id: item_id[i].value,
                               barcode: item_barcode[i].value,
-                              srp: srp[i].value,
+                              srp: (srp[i].value).replace(/,/g, ''),
                               qty: qty[i].value,
-                              dc_baht: dc[i].value,
+                              dc_baht: (dc[i].value).replace(/,/g, ''),
                               dc_percent: dc_percent[i].value,
-                              net: net[i].value,
+                              net: (net[i].value).replace(/,/g, ''),
                             };
           }
           total_tax = total_net*0.07/1.07;
@@ -195,18 +195,10 @@ var count_list = 0;
     					if(data)
     					{
                 alert("ทำการบันทึกข้อมูลเรียบร้อยแล้ว !");
-
-                $('#cusName_view').val($("#cusName").val());
-                var jungwat = " ";
-                if($("#cusProvince").val()!="กรุงเทพมหานคร") jungwat = " จ.";
-                $('#cusAddress_view').val($("#cusAddress").val() + jungwat + $("#cusProvince").val());
-                $('#cusTaxID_view').val($("#cusTaxID").val());
-                $('#cusTelephone_view').val($("#cusTelephone").val());
-
-                $("#paymentWay").val("");
                 $("#paymentValue").val("");
                 $("#btnConfirmPayment").attr('disabled', false);
-
+                $('#modPayment').modal('toggle');
+                $('#modPrintDocument').modal('show');
     	        }else{
     	        	alert("ไม่สามารถ บันทึกข้อมูลได้ !");
     	        }

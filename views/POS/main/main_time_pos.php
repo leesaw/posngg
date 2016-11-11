@@ -183,6 +183,7 @@
 <?php $this->load->view('includes/modal_new_customer'); ?>
 <?php $this->load->view('includes/modal_payment'); ?>
 <?php $this->load->view('includes/modal_discount_topup'); ?>
+<?php $this->load->view('includes/modal_print_document'); ?>
 <!-- ./Modal section-->
 
 <?php $this->load->view('includes/footer'); ?>

@@ -42,7 +42,7 @@ var count_list = 0;
     $('#valueDCTopup').keyup(function(e){ //enter next
         if(e.keyCode == 13) {
           if($("#valueDCTopup").val() != "") {
-            document.getElementById("dc_topup").innerHTML = parseFloat($("#valueDCTopup").val()).toFixed(2);
+            document.getElementById("dc_topup").innerHTML = parseFloat($("#valueDCTopup").val()).toFixed(2).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
             $("#hiddenDCTopup").val($("#valueDCTopup").val());
           }
           $("#valueDCTopup").val('');
@@ -56,7 +56,7 @@ var count_list = 0;
     $(document).ready(function() {
       $("#btnConfirmDCTopup").click(function() {
         if($("#valueDCTopup").val() != "") {
-          document.getElementById("dc_topup").innerHTML = parseFloat($("#valueDCTopup").val()).toFixed(2);
+          document.getElementById("dc_topup").innerHTML = parseFloat($("#valueDCTopup").val()).toFixed(2).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
           $("#hiddenDCTopup").val($("#valueDCTopup").val());
         }
         $("#valueDCTopup").val('');
@@ -175,7 +175,8 @@ var count_list = 0;
                               net: (net[i].value).replace(/,/g, ''),
                             };
           }
-          total_tax = total_net*0.07/1.07;
+
+          total_tax = (total_net - dc_topup)*0.07/1.07;
           var payment = { paymentWay: $("#paymentWay").val(),
                           paymentValue: $("#paymentValue").val(),
                           paymentRemark: $("#paymentRemark").val(),

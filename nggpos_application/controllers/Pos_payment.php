@@ -51,10 +51,27 @@ class Pos_payment extends CI_Controller {
 		if ($posp_id > 0) {
 			$result_item = true;
 			for($i=0; $i<count($item); $i++) {
+				// get item details
+				$where_item = "tiit_id = '".$item[$i]['id']."'";
+				$this->load->model('item_model','',TRUE);
+				$item_array = $this->item_model->get_time_item($where_item);
+				foreach($item_array as $loop) {
+					$item_name = $loop->tiit_name;
+					$item_number = $loop->tiit_number;
+					$item_brand = $loop->tiit_brand;
+					$item_description = $loop->tiit_description;
+					$item_uom = $loop->tiit_uom;
+				}
+
 				$item_temp = array(
 						"popi_posp_id" => $posp_id,
 						"popi_item_id" => $item[$i]['id'],
 						"popi_barcode" => $item[$i]['barcode'],
+						"popi_item_name" => $item_name,
+						"popi_item_number" => $item_number,
+						"popi_item_brand" => $item_brand,
+						"popi_item_description" => $item_description,
+						"popi_item_uom" => $item_uom,
 						"popi_item_srp" => $item[$i]['srp'],
 						"popi_item_dc_baht" => $item[$i]['dc_baht'],
 						"popi_item_dc_percent" => $item[$i]['dc_percent'],
@@ -72,13 +89,30 @@ class Pos_payment extends CI_Controller {
 			# code......
 		//------------------------------------------------------
 		// check all query error and return true or false
-			if (($posp > 0) && ($result_item)) {
-				echo true;
+			if (($posp_id > 0) && ($result_item)) {
+				echo $posp_id;
 			} else {
-				echo false;
+				echo 0;
 			}
 		//------------------------------------------------------
 
+	}
+
+	function view_payment()
+	{
+		$payment_id = $this->uri->segment(3);
+		$where = "";
+		$where .= "posp_id = '".$payment_id."' and posp_enable = 1";
+
+		$this->load->model('pos_payment_model','',TRUE);
+		$data['payment_array'] = $this->pos_payment_model->get_payment($where);
+
+		$where = "popi_posp_id = '".$payment_id."'";
+		$where .= " and popi_enable = 1";
+		$data['item_array'] = $this->pos_payment_model->get_item_payment($where);
+
+		$data['title'] = programname.version." - Payment view";
+		$this->load->view('POS/main/main_time_view_payment', $data);
 	}
 
 

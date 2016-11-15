@@ -1,6 +1,7 @@
 var count_enter_form_input_product = 0;
 var count_list = 0;
 
+
     $("#barcode").focus();
 
     $("#it_quantity").keypress(function (evt) {
@@ -53,6 +54,35 @@ var count_list = 0;
 				}
 		});
 
+    $("#valueAllPercent").keyup(function(e){
+      if(e.keyCode == 13) {
+        var dc = document.getElementsByName('it_dc_percent');
+
+        if($("#valueAllPercent").val() != "") {
+          for (var i=0; i<dc.length; i++) {
+            dc[i].value = $("#valueAllPercent").val();
+          }
+        }
+        $("#valueAllPercent").val('');
+        $('#modAllPercent').modal('toggle');
+        setTimeout(function(){
+                  calculate();
+              },300);
+      }
+    });
+
+    $('#modAllPercent').on('shown.bs.modal', function() {
+      $(this).find('[autofocus]').focus();
+    });
+
+    $('#modDCTopup').on('shown.bs.modal', function() {
+      $(this).find('[autofocus]').focus();
+    });
+
+    $('#modNewCustomer').on('shown.bs.modal', function() {
+      $(this).find('[autofocus]').focus();
+    });
+
     $(document).ready(function() {
       $("#btnConfirmDCTopup").click(function() {
         if($("#valueDCTopup").val() != "") {
@@ -61,6 +91,21 @@ var count_list = 0;
         }
         $("#valueDCTopup").val('');
         $('#modDCTopup').modal('toggle');
+        setTimeout(function(){
+                  calculate();
+              },300);
+      });
+
+      $("#btnConfirmAllPercent").click(function() {
+        var dc = document.getElementsByName('it_dc_percent');
+
+        if($("#valueAllPercent").val() != "") {
+          for (var i=0; i<dc.length; i++) {
+            dc[i].value = $("#valueAllPercent").val();
+          }
+        }
+        $("#valueAllPercent").val('');
+        $('#modAllPercent').modal('toggle');
         setTimeout(function(){
                   calculate();
               },300);
@@ -193,13 +238,13 @@ var count_list = 0;
     				url : link_save_payment ,
     				data : {item: item_array, payment: payment} ,
     				success : function(data) {
-    					if(data)
+    					if(data > 0)
     					{
                 alert("ทำการบันทึกข้อมูลเรียบร้อยแล้ว !");
                 $("#paymentValue").val("");
                 $("#btnConfirmPayment").attr('disabled', false);
                 $('#modPayment').modal('toggle');
-                $('#modPrintDocument').modal('show');
+                window.location = link_view_payment+"/"+data;
     	        }else{
     	        	alert("ไม่สามารถ บันทึกข้อมูลได้ !");
     	        }
@@ -209,6 +254,7 @@ var count_list = 0;
                 $("#btnConfirmPayment").attr('disabled', false);
             }
     			});
+
         }
 
       });

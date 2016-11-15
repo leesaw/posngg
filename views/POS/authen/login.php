@@ -27,7 +27,7 @@
 
       <form action="<?php echo site_url("pos_login/verify"); ?>" name="login_form" id="login_form" method="post">
         <div class="form-group has-feedback">
-          <input type="text" class="form-control input-lg" name="username" id="username" placeholder="Username">
+          <input type="text" class="form-control input-lg" name="username" id="username" placeholder="Username" autofocus>
           <span class="form-control-feedback"><i class="fa fa-user-o" aria-hidden="true"></i></span>
         </div>
         <div class="form-group has-feedback">

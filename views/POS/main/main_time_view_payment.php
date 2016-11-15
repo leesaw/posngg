@@ -3,17 +3,8 @@
 <head>
 <?php $this->load->view('includes/header'); ?>
 <style>
-.bigtext {
-  font-weight: bold;
-  font-size: 30px;
-}
-.menutext {
-  font-weight: bold;
-  font-size: 20px;
-}
-.totalvalue {
-  font-weight: bold;
-  font-size: 16px;
+.center-text {
+  text-align: center;
 }
 </style>
 </head>
@@ -22,10 +13,12 @@
   <?php $this->load->view('includes/menu_head_top'); ?>
 
   <?php
-    foreach($sale_person as $loop) {
-      $nggu_id = $loop->nggu_id;
-      $nggu_number = $loop->nggu_number;
-      $nggu_name = $loop->nggu_firstname." ".$loop->nggu_lastname;
+    foreach($payment_array as $loop) {
+      $total_net = $loop->posp_price_net;
+      $total_topup = $loop->posp_price_topup;
+      $total_tax = $loop->posp_price_tax;
+      $total_paid = $loop->posp_price_paid;
+
     }
   ?>
   <!-- Full Width Column -->
@@ -53,52 +46,43 @@
         <div class="col-md-9">
           <div class="box box-solid">
             <div class="box-body">
-              <div class="row">
-                <div class="col-md-4">
-                  <input type='text' class='form-control' name='barcode' id='barcode' placeholder='สแกนบาร์โค้ด' autocomplete='off'>
-                </div>
-                <div class="col-md-1">
-
-                </div>
-                <div class="col-md-3">
-                    <p class="bigtext">ยอดรวม</p>
-                </div>
-                <div class="col-md-4">
-                    <p class="bigtext" id="summary">0 บาท</p>
-                </div>
-              </div>
-
               <div class='row'>
                 <div class='col-md-12 table-responsive' style='overflow: auto;height: 400px;'>
                   <table class='table table-bordered' id='itemlist'>
                     <thead>
-                      <th class='col-xs-1'>X</th>
-                      <th class='col-xs-1'>รูปภาพ</th>
-                      <th class='col-xs-1'>Barcode</th>
-                      <th class='col-xs-3'>สินค้า</th>
-                      <th class='col-xs-1'>ราคาป้าย</th>
-                      <th class='col-xs-1'>จำนวน</th>
-                      <th class='col-xs-1'>ส่วนลด(บาท)</th>
-                      <th class='col-xs-1'>ส่วนลด(%)</th>
-                      <th class='col-xs-1'>Net</th>
+                      <th class='col-xs-2 center-text'>Barcode</th>
+                      <th class='col-xs-3 center-text'>สินค้า</th>
+                      <th class='col-xs-1 center-text'>ราคาป้าย</th>
+                      <th class='col-xs-1 center-text'>จำนวน</th>
+                      <th class='col-xs-1 center-text'>ส่วนลด(บาท)</th>
+                      <th class='col-xs-1 center-text'>ส่วนลด(%)</th>
+                      <th class='col-xs-2' style="text-align:right;">Net</th>
                     </thead>
-                    <tbody></tbody>
-                  </table>
-                </div>
-                <div class='col-md-12 table-responsive'>
-                  <table class='table table-bordered'>
-                    <thead>
-                      <th class='col-xs-2 totalvalue'>รวมทั้งหมด</th>
-                      <th class='col-xs-1 totalvalue text-blue'>ป้าย</th>
-                      <th class='col-xs-1 totalvalue text-blue'><div id="sum_srp">0</div></th>
-                      <th class='col-xs-1 totalvalue text-green'>จำนวน</th>
-                      <th class='col-xs-1 totalvalue text-green'><input type="hidden" id="var_allcount" value="0"/><div id="allcount">0</div></th>
-                      <th class='col-xs-1 totalvalue text-orange'>ส่วนลด</th>
-                      <th class='col-xs-1 totalvalue text-orange'><div id="sum_dc">0</div></th>
-                      <th class='col-xs-2 totalvalue text-red'>ส่วนลดท้ายบิล</th>
-                      <th class='col-xs-2 totalvalue text-red'><input type="hidden" id="hiddenDCTopup" value=""/><div id="dc_topup">0</div></th>
-                    </thead>
-                    <tbody></tbody>
+                    <tbody>
+                      <?php $sum_qty = 0; foreach($item_array as $loop) { ?>
+                      <tr>
+                        <td class="center-text"><?php echo $loop->popi_barcode; ?></td>
+                        <td><?php echo $loop->popi_item_number."-".$loop->popi_item_name."<br>".$loop->popi_item_brand."<br>".$loop->popi_item_description; ?></td>
+                        <td class="center-text"><?php echo number_format($loop->popi_item_srp, 2,'.',','); ?></td>
+                        <td class="center-text"><?php echo $loop->popi_item_qty." ".$loop->popi_item_uom; ?></td>
+                        <td class="center-text"><?php echo number_format($loop->popi_item_dc_baht, 2,'.',','); ?></td>
+                        <td class="center-text"><?php echo number_format($loop->popi_item_dc_percent, 2,'.',','); ?></td>
+                        <td style="text-align:right;"><?php echo number_format($loop->popi_item_net, 2,'.',','); ?></td>
+                      </tr>
+                      <?php $sum_qty += $loop->popi_item_qty; } ?>
+                    </tbody>
+                    <tfoot>
+                      <tr>
+                        <th colspan="3" style="text-align:right;">จำนวน</th>
+                        <th class="center-text"><?php echo $sum_qty; ?></th>
+                        <th colspan="2" style="text-align:right;">รวมเป็นเงิน</th>
+                        <th style="text-align:right;"><?php echo number_format($total_net, 2,'.',','); ?></th>
+                      </tr>
+                      <tr><th colspan="4"></th><th colspan="2" style="text-align:right;"><u>หัก</u> ส่วนลด</th><th style="text-align:right;"><?php echo number_format($total_topup, 2,'.',','); ?></th></tr>
+                      <tr><th colspan="4"></th><th colspan="2" style="text-align:right;">จํานวนเงินหลังหักส่วนลด</th><th style="text-align:right;"><?php echo number_format($total_net-$total_topup-$total_tax, 2,'.',','); ?></th></tr>
+                      <tr><th colspan="4"></th><th colspan="2" style="text-align:right;">จํานวนภาษีมูลค่าเพิ่ม 7 %</th><th style="text-align:right;"><?php echo number_format($total_tax, 2,'.',','); ?></th></tr>
+                      <tr><th colspan="4"></th><th colspan="2" style="text-align:right;">จํานวนเงินรวมทั้งสิ้น</th><th style="text-align:right;"><?php echo number_format($total_net-$total_topup, 2,'.',','); ?></th></tr>
+                    </tfoot>
                   </table>
                 </div>
               </div>

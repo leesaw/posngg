@@ -11,7 +11,7 @@
         <div class="row"><div class="col-md-12"><form class="form-horizontal">
 					<div class="form-group">
 						<label class="col-md-4 control-label" for="cusTelephone">เบอร์ติดต่อ <font class='text-red'>*</font></label>
-						<div class="col-md-8"> <input type="text" class="form-control" id="cusTelephone" name="cusTelephone" value="" placeholder="0812345678" /></div>
+						<div class="col-md-8"> <input type="text" class="form-control" id="cusTelephone" name="cusTelephone" value="" placeholder="0812345678" autofocus/></div>
           </div>
           <div class="form-group">
 						<label class="col-md-4 control-label" for="cusName">ชื่อ-นามสกุล <font class='text-red'>*</font></label>

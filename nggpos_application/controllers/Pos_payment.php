@@ -61,6 +61,7 @@ class Pos_payment extends CI_Controller {
 					$item_brand = $loop->tiit_brand;
 					$item_description = $loop->tiit_description;
 					$item_uom = $loop->tiit_uom;
+					$item_serial = $loop->tiit_serial;
 				}
 
 				$item_temp = array(
@@ -72,6 +73,7 @@ class Pos_payment extends CI_Controller {
 						"popi_item_brand" => $item_brand,
 						"popi_item_description" => $item_description,
 						"popi_item_uom" => $item_uom,
+						"popi_item_serial" => $item_serial,
 						"popi_item_srp" => $item[$i]['srp'],
 						"popi_item_dc_baht" => $item[$i]['dc_baht'],
 						"popi_item_dc_percent" => $item[$i]['dc_percent'],

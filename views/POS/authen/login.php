@@ -35,10 +35,10 @@
           <span class="form-control-feedback"><i class="fa fa-key" aria-hidden="true"></i></span>
         </div>
         <div class="row">
-          <div class="col-xs-8">
+          <div class="col-md-8">
           </div>
           <!-- /.col -->
-          <div class="col-xs-4">
+          <div class="col-md-4">
             <button type="submit" class="btn btn-default btn-block btn-lg btn-flat">ตกลง</button>
 
           </div>

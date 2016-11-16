@@ -11,7 +11,7 @@
         <div class="row"><div class="col-md-12"><form class="form-horizontal">
 					<div class="form-group">
 						<label class="col-md-4 control-label" for="cusTelephone">เบอร์ติดต่อ <font class='text-red'>*</font></label>
-						<div class="col-md-8"> <input type="text" class="form-control" id="cusTelephone" name="cusTelephone" value="" placeholder="0812345678" autofocus/></div>
+						<div class="col-md-8"> <input type="text" class="form-control" id="cusTelephone" name="cusTelephone" value="" placeholder="ตัวอย่าง 0812345678" autofocus/></div>
           </div>
           <div class="form-group">
 						<label class="col-md-4 control-label" for="cusName">ชื่อ-นามสกุล <font class='text-red'>*</font></label>
@@ -32,7 +32,7 @@
           </div>
           <div class="form-group">
 						<label class="col-md-4 control-label" for="cusTaxID">เลขที่ผู้เสียภาษี / Passport</label>
-						<div class="col-md-8"> <input type="text" class="form-control" id="cusTaxID" name="cusTaxID" value="" placeholder="1-1230-00015-19-4" /></div>
+						<div class="col-md-8"> <input type="text" class="form-control" id="cusTaxID" name="cusTaxID" value="" placeholder="0-0000-00000-00-0" /></div>
           </div>
 
           </div>            <!-- /modal-body -->

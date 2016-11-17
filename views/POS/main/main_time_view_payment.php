@@ -18,6 +18,7 @@
 
   <?php
     foreach($payment_array as $loop) {
+      $payment_id = $loop->posp_id;
       $total_net = $loop->posp_price_net;
       $total_topup = $loop->posp_price_topup;
       $total_tax = $loop->posp_price_tax;
@@ -57,7 +58,7 @@
             <div class="box-header">
               <div class='row'>
                 <div class='col-md-4'>
-                  <a data-toggle="modal" data-target="#modAllPercent" type="button" class="btn btn-primary btn-lg" name="btnSmallInvoice" id="btnSmallInvoice">พิมพ์ใบกำกับภาษีอย่างย่อ</a>
+                  <a href="<?php echo site_url("pos_payment/print_small_invoice")."/".$payment_id; ?>" type="button" class="btn btn-primary btn-lg" name="btnSmallInvoice" id="btnSmallInvoice">พิมพ์ใบกำกับภาษีอย่างย่อ</a>
                 </div>
                 <div class='col-md-4'>
                 </div>

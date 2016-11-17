@@ -117,5 +117,28 @@ class Pos_payment extends CI_Controller {
 		$this->load->view('POS/main/main_time_view_payment', $data);
 	}
 
+	function print_small_invoice()
+	{
+		$payment_id = $this->uri->segment(3);
+		$where = "";
+		$where .= "posp_id = '".$payment_id."' and posp_enable = 1";
+
+		$this->load->model('pos_payment_model','',TRUE);
+		$data['payment_array'] = $this->pos_payment_model->get_payment($where);
+
+		$where = "popi_posp_id = '".$payment_id."'";
+		$where .= " and popi_enable = 1";
+		$data['item_array'] = $this->pos_payment_model->get_item_payment($where);
+
+		$this->load->library('Pdf');
+		$pdf = new TCPDF(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
+		// Add a page
+		$pdf->SetFont('thsarabunpsk','', 14, '', false);
+		$pdf->AddPage();
+		$html = "<h1><b>ทดสอบ</b></h1>";
+		$pdf->writeHTML($html, true, false, true, false, '');
+		$pdf->Output('example_001.pdf', 'I');
+	}
+
 
 }

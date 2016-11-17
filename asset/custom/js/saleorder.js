@@ -1,6 +1,15 @@
 var count_enter_form_input_product = 0;
 var count_list = 0;
 
+// type currency
+$('input.number').keypress(function(event){
+      if(event.which >= 37 && event.which <= 40){
+          event.preventDefault();
+      }
+      var $this = $(this);
+      var num = $this.val().replace(/,/g, '');
+      $this.val(num.replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,"));
+});
 
     $("#barcode").focus();
 

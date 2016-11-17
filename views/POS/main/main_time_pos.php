@@ -176,7 +176,16 @@
     <!-- /.content -->
   </div>
   <!-- /.content-wrapper -->
-
+  <footer class="main-footer">
+    <div class="container">
+      <div class="pull-right hidden-xs">
+        <b>Version</b> <?php echo version; ?>
+      </div>
+      <strong>Copyright &copy; 2016 <?php echo programname; ?></strong> All rights
+      reserved.
+    </div>
+    <!-- /.container -->
+  </footer>
 </div>
 <!-- ./wrapper -->
 

@@ -159,32 +159,25 @@ Sathon Bangkok 10120<br>Tel. 02-678-9988 Fax. 02-678-5566<br>Tax ID : 0105555081
 		<th width="85" style="border-top:1px solid black;border-left:1px solid black;border-bottom:1px solid black;text-align:center;">ส่วนลด</th>
 		<th width="105" style="border-top:1px solid black;border-right:1px solid black;border-left:1px solid black;border-bottom:1px solid black;text-align:center;">จำนวนเงิน</th>
 	</tr>
-</thead></tbody></table>
-</body></html>';
+</thead><tbody>';
+		// $pdf->writeHTML($html, true, false, true, false, '');
+
+
+		$no = 1;
+		foreach ($item_array as $loop) {
+			$html .= '<tr><td style="text-align:center;">'.$no.'</td><td style="text-align:center;">'.$loop->popi_barcode.'</td>
+				<td>'.$loop->popi_item_number."-".$loop->popi_item_name."<br>".$loop->popi_item_brand."<br>".$loop->popi_item_description;
+				if ($loop->popi_item_serial != "")	$html .= "<br>Serial : ".$loop->popi_item_serial;
+				$html .= '</td><td style="text-align:center;">'.number_format($loop->popi_item_srp, 2,'.',',').'</td>
+				<td style="text-align:center;">'.$loop->popi_item_qty." ".$loop->popi_item_uom.'</td>
+				<td style="text-align:center;">'.number_format($loop->popi_item_dc_baht, 2,'.',',').'</td>
+				<td style="text-align:center;">'.number_format($loop->popi_item_dc_percent, 2,'.',',').'</td>
+				<td style="text-align:right;">'.number_format($loop->popi_item_net, 2,'.',',').'</td>
+				</tr>';
+		}
+		$html .= '</tbody></table></body></html>';
 		$pdf->writeHTML($html, true, false, true, false, '');
 
-// $html = '
-// <tbody>
-//
-// </tbody></table>
-// </body></html>';
-// 	$pdf->writeHTML($html, true, false, true, false, '');
-		// $pdf->writeHTML($html, true, false, true, false, '');
-		// $no = 1;
-		// for ($item_array as $loop) {
-		// 	$html = '<tr><td style="text-align:center;">'.$no.'</td><td style="text-align:center;">'.$loop->popi_barcode.'</td>
-		// 		<td>'.$loop->popi_item_number."-".$loop->popi_item_name."<br>".$loop->popi_item_brand."<br>".$loop->popi_item_description;
-		// 		if ($loop->popi_item_serial != "")	$html .= "<br>Serial : ".$loop->popi_item_serial;
-		// 		$html .= '</td><td style="text-align:center;">'.number_format($loop->popi_item_srp, 2,'.',',').'</td>
-		// 		<td style="text-align:center;">'.$loop->popi_item_qty." ".$loop->popi_item_uom.'</td>
-		// 		<td style="text-align:center;">'.number_format($loop->popi_item_dc_baht, 2,'.',',').'</td>
-		// 		<td style="text-align:center;">'.number_format($loop->popi_item_dc_percent, 2,'.',',').'</td>
-		// 		<td style="text-align:right;">'.number_format($loop->popi_item_net, 2,'.',',').'</td>
-		// 		</tr>';
-		// }
-		// $pdf->writeHTML($html, true, false, true, false, '');
-		//
-		// $html = <<<EOD
 		$pdf->Output('example_001.pdf', 'I');
 
 	}

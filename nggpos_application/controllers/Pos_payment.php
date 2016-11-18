@@ -124,20 +124,66 @@ class Pos_payment extends CI_Controller {
 		$where .= "posp_id = '".$payment_id."' and posp_enable = 1";
 
 		$this->load->model('pos_payment_model','',TRUE);
-		$data['payment_array'] = $this->pos_payment_model->get_payment($where);
+		$payment_array = $this->pos_payment_model->get_payment($where);
 
 		$where = "popi_posp_id = '".$payment_id."'";
 		$where .= " and popi_enable = 1";
-		$data['item_array'] = $this->pos_payment_model->get_item_payment($where);
+		$item_array = $this->pos_payment_model->get_item_payment($where);
 
 		$this->load->library('Pdf');
+
 		$pdf = new TCPDF(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
 		// Add a page
-		$pdf->SetFont('thsarabunpsk','', 14, '', false);
-		$pdf->AddPage();
-		$html = "<h1><b>ทดสอบ</b></h1>";
+		$pdf->SetFont('thsarabunpsk','', 14);
+		$pdf->setPrintHeader(false);
+		$pdf->setPrintFooter(false);
+		$pdf->AddPage('P', 'A4');
+		$html = <<<EOD
+		<html><body><table border="0"><tbody><tr>
+<td width="300">NGG TIMEPIECES COMPANY LIMITED<br>
+27 Soi Pattanasin Naradhiwas Rajanagarindra Rd. Thungmahamek
+Sathon Bangkok 10120<br>Tel. 02-678-9988 Fax. 02-678-5566<br>Tax ID : 0105555081331</td>
+<td width="230" style="text-align: right;">ใบกำกับภาษีอย่างย่อ /<br>ใบเสร็จรับเงิน<br><br>ต้นฉบับ</td></tr>
+<tr><td></td><td></td></tr>
+
+<tr><td width="350">นามลูกค้า</td><td width="180">เลขที่  <br>วันที่</td></tr>
+</tbody></table>
+<br/><br/>
+<table border="0">
+<thead>
+	<tr>
+		<th width="25" style="border-top:1px solid black;border-left:1px solid black;border-bottom:1px solid black;text-align:center;">No.</th>
+		<th width="200" style="border-top:1px solid black;border-left:1px solid black;border-bottom:1px solid black;text-align:center;">รายละเอียดสินค้า</th>
+		<th width="40" style="border-top:1px solid black;border-left:1px solid black;border-bottom:1px solid black;text-align:center;">จำนวน</th>
+		<th width="85" style="border-top:1px solid black;border-left:1px solid black;border-bottom:1px solid black;text-align:center;">หน่วยละ</th>
+		<th width="85" style="border-top:1px solid black;border-left:1px solid black;border-bottom:1px solid black;text-align:center;">ส่วนลด</th>
+		<th width="105" style="border-top:1px solid black;border-right:1px solid black;border-left:1px solid black;border-bottom:1px solid black;text-align:center;">จำนวนเงิน</th>
+	</tr>
+</thead>
+<tbody>
+EOD;
+$pdf->writeHTML($html, true, false, true, false, '');
+$no = 1;
+// for ($item_array as $loop) {
+// 	$html = '<tr><td style="text-align:center;">'.$no.'</td><td style="text-align:center;">'.$loop->popi_barcode.'</td>
+// 		<td>'.$loop->popi_item_number."-".$loop->popi_item_name."<br>".$loop->popi_item_brand."<br>".$loop->popi_item_description;
+// 		if ($loop->popi_item_serial != "")	$html .= "<br>Serial : ".$loop->popi_item_serial;
+// 		$html .= '</td><td style="text-align:center;">'.number_format($loop->popi_item_srp, 2,'.',',').'</td>
+// 		<td style="text-align:center;">'.$loop->popi_item_qty." ".$loop->popi_item_uom.'</td>
+// 		<td style="text-align:center;">'.number_format($loop->popi_item_dc_baht, 2,'.',',').'</td>
+// 		<td style="text-align:center;">'.number_format($loop->popi_item_dc_percent, 2,'.',',').'</td>
+// 		<td style="text-align:right;">'.number_format($loop->popi_item_net, 2,'.',',').'</td>
+// 		</tr>';
+// }
+// $pdf->writeHTML($html, true, false, true, false, '');
+
+$html = <<<EOD
+</tbody></table>
+</body></html>
+EOD;
 		$pdf->writeHTML($html, true, false, true, false, '');
 		$pdf->Output('example_001.pdf', 'I');
+
 	}
 
 

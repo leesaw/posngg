@@ -2,14 +2,36 @@ var count_enter_form_input_product = 0;
 var count_list = 0;
 
 // type currency
-$('input.number').keypress(function(event){
+$(document).ready(function(){
+  $('input.number').keyup(function(event){
+      // skip for arrow keys
       if(event.which >= 37 && event.which <= 40){
           event.preventDefault();
       }
       var $this = $(this);
-      var num = $this.val().replace(/,/g, '');
-      $this.val(num.replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,"));
+      var num = $this.val().replace(/,/gi, "").split("").reverse().join("");
+
+      var num2 = RemoveRougeChar(num.replace(/(.{3})/g,"$1,").split("").reverse().join(""));
+
+      console.log(num2);
+
+
+      // the following line has been simplified. Revision history contains original.
+      $this.val(num2);
+  });
 });
+
+function RemoveRougeChar(convertString){
+
+
+    if(convertString.substring(0,1) == ","){
+
+        return convertString.substring(1, convertString.length)
+
+    }
+    return convertString;
+
+}
 
     $("#barcode").focus();
 
@@ -232,7 +254,7 @@ $('input.number').keypress(function(event){
 
           total_tax = (total_net - dc_topup)*0.07/1.07;
           var payment = { paymentWay: $("#paymentWay").val(),
-                          paymentValue: $("#paymentValue").val(),
+                          paymentValue: parseFloat(($("#paymentValue").val()).replace(/,/g, '')),
                           paymentRemark: $("#paymentRemark").val(),
                           customer_id: $("#customer_id").val(),
                           saleperson_id: $("#saleperson_id").val(),

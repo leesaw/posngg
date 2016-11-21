@@ -15,7 +15,7 @@ Class Pos_payment_model extends CI_Model
   {
     $this->db->select('posp_id, posp_issuedate, posp_gateway, posp_price_net, posp_price_paid, posp_price_tax, posp_price_topup, posp_price_discount, posp_status, posp_remark,
      posp_dateadd, posp_dateadd_by, posp_updatedate, posp_update_by, posp_shop_name, posp_enable, posp_customer_id, posc_name, posc_address, posc_province, posc_telephone, posc_taxid,
-     posp_saleperson_id, nggu_number, nggu_firstname, nggu_lastname, posp_shop_id');
+     posp_saleperson_id, nggu_number, nggu_firstname, nggu_lastname, posp_shop_id, posp_small_invoice_number');
     $this->db->from('pos_payment');
     $this->db->join('pos_customer', 'posc_id = posp_customer_id', 'left');
     $this->db->join('ngg_users', 'nggu_id = posp_saleperson_id', 'left');
@@ -33,6 +33,21 @@ Class Pos_payment_model extends CI_Model
     if ($where != "") $this->db->where($where);
     $this->db->order_by('popi_id', 'asc');
     return $this->db->get()->result();
+  }
+
+  function getMaxNumber_small_invoice($month, $shop)
+  {
+     $start = $month."-01 00:00:00";
+     $end = $month."-31 23:59:59";
+     $this->db->select("posp_id");
+     $this->db->from('pos_payment');
+     $this->db->where("posp_dateadd >=",$start);
+     $this->db->where("posp_dateadd <=",$end);
+     $this->db->where("posp_enable", 1);
+     $this->db->where("posp_status", 'N');
+     if ($shop != "") $this->db->where("posp_shop_id", $shop);
+     $query = $this->db->get();
+     return $query->num_rows();
   }
 
   function insert_new_payment($payment)

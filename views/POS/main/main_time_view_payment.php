@@ -58,7 +58,7 @@
             <div class="box-header">
               <div class='row'>
                 <div class='col-md-4'>
-                  <a href="<?php echo site_url("pos_payment/print_small_invoice")."/".$payment_id; ?>" type="button" class="btn btn-primary btn-lg" name="btnSmallInvoice" id="btnSmallInvoice">พิมพ์ใบกำกับภาษีอย่างย่อ</a>
+                  <a href="<?php echo site_url("pos_payment/print_small_invoice")."/".$payment_id; ?>" target="_blank" type="button" class="btn btn-primary btn-lg" name="btnSmallInvoice" id="btnSmallInvoice">พิมพ์ใบกำกับภาษีอย่างย่อ</a>
                 </div>
                 <div class='col-md-4'>
                 </div>
@@ -95,7 +95,7 @@
                       </tr>
                       <?php $sum_qty += $loop->popi_item_qty; } ?>
                       <?php if($total_topup > 0) { ?>
-                      <tr><td></td><td>ส่วนลดท้ายบิล</td><td colspan="4"></td><td style="text-align:right;"><?php echo "- ".$total_topup; ?></td></tr>
+                      <tr><td></td><td>ส่วนลดท้ายบิล</td><td colspan="4"></td><td style="text-align:right;"><?php echo "- ".number_format($total_topup, 2,'.',','); ?></td></tr>
                       <?php } ?>
                     </tbody>
                     <tfoot>
@@ -174,25 +174,10 @@
 </div>
 <!-- ./wrapper -->
 
-<!-- Modal section-->
-<?php $this->load->view('includes/modal_new_customer'); ?>
-<?php $this->load->view('includes/modal_payment'); ?>
-<?php $this->load->view('includes/modal_discount_topup'); ?>
-<?php $this->load->view('includes/modal_print_document'); ?>
-<?php $this->load->view('includes/modal_discount_percent_all'); ?>
-<!-- ./Modal section-->
 
 <?php $this->load->view('includes/footer'); ?>
-<!-- Sale Order Function -->
-<script src="<?php echo base_url(); ?>asset/custom/js/saleorder.min.js"></script>
-
 <script>
-  var link = '<?php echo site_url('pos_time_item/scan_barcode'); ?>';
-  var link_saleperson = '<?php echo site_url('pos_sale_person/check_sale_person'); ?>';
-  var link_customer = '<?php echo site_url('pos_customer/check_customer'); ?>';
-  var link_new_customer = '<?php echo site_url('pos_customer/save_new_customer'); ?>';
-  var link_save_payment = '<?php echo site_url('pos_payment/save_new_payment'); ?>';
-  var link_view_payment = '<?php echo site_url('pos_payment/view_payment'); ?>';
+
 
 </script>
 </body>

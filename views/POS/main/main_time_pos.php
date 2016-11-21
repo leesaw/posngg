@@ -123,7 +123,7 @@
               <div class="box-body">
                 <div class='row'>
                   <div class='col-md-12'>
-                    เบอร์ติดต่อ
+                    เลขสมาชิก / เบอร์ติดต่อ
                     <div class="form-group has-feedback">
                       <input type='text' name='cusTelephone_view' id='cusTelephone_view' class='form-control' value=''>
                       <span class="form-control-feedback"><i class="fa fa-search" aria-hidden="true"></i></span>

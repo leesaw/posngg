@@ -18,6 +18,7 @@ class Pos_payment extends CI_Controller {
 	{
     $item = $this->input->post("item");
 		$payment = $this->input->post("payment");
+		$paid = $this->input->post("paid");
 
     $date_today = date("Y-m-d");
     $datetime_now = date("Y-m-d H:i:s");
@@ -29,7 +30,7 @@ class Pos_payment extends CI_Controller {
     $year_number = date("y");
 		$year_number = (int)$year_number + 43;
 		$month_number = date("m");
-		$shop_check_number = "";
+		$shop_check_number = $shop_id;
 
 		$this->load->model('pos_payment_model','',TRUE);
     $number = $this->pos_payment_model->getMaxNumber_small_invoice($month, $shop_check_number);
@@ -41,9 +42,7 @@ class Pos_payment extends CI_Controller {
     $payment_temp = array(
 				"posp_issuedate" => $date_today,
 				"posp_small_invoice_number" => $number,
-				"posp_gateway" => $payment['paymentWay'],
 				"posp_price_net" => $payment['total_net'],
-				"posp_price_paid" => $payment['paymentValue'],
 				"posp_price_discount" => $payment['total_dc'],
 				"posp_price_topup" => $payment['dc_topup'],
 				"posp_price_tax" => $payment['total_tax'],
@@ -62,6 +61,18 @@ class Pos_payment extends CI_Controller {
 		// insert pos payment item
 		if ($posp_id > 0) {
 			$result_item = true;
+
+			for($i=0; $i<count($paid); $i++) {
+				$paid_temp = array(
+					"paid_payment_id" => $posp_id,
+					"paid_gateway" => $paid[$i]['paid_gateway'],
+					"paid_price_paid" => $paid[$i]['paid_price_paid'],
+				);
+				$this->load->model('pos_payment_model','',TRUE);
+				$result_id = $this->pos_payment_model->insert_paid($paid_temp);
+				if ($result_id < 0) $result_item = false;
+			}
+
 			for($i=0; $i<count($item); $i++) {
 				// get item details
 				$where_item = "tiit_id = '".$item[$i]['id']."'";
@@ -116,17 +127,70 @@ class Pos_payment extends CI_Controller {
 	{
 		$payment_id = $this->uri->segment(3);
 		$where = "";
-		$where .= "posp_id = '".$payment_id."' and posp_enable = 1";
+		$where .= "posp_id = '".$payment_id."'";
 
 		$this->load->model('pos_payment_model','',TRUE);
 		$data['payment_array'] = $this->pos_payment_model->get_payment($where);
 
 		$where = "popi_posp_id = '".$payment_id."'";
 		$where .= " and popi_enable = 1";
-		$data['item_array'] = $this->pos_payment_model->get_item_payment($where);
+		$data['item_array'] = $this->pos_payment_model->get_time_item_payment($where);
+
+		$where = "paid_payment_id = '".$payment_id."'";
+		$where .= " and paid_enable = 1";
+		$data['paid_array'] = $this->pos_payment_model->get_paid_payment($where);
+
+		$shop_id = $this->session->userdata('sessshopid');
+		$this->load->model('shop_model','',TRUE);
+		$where = "posh_id = '".$shop_id."'";
+		$data['shop_array'] = $this->shop_model->get_shop($where);
 
 		$data['title'] = programname.version." - Payment view";
 		$this->load->view('POS/main/main_time_view_payment', $data);
+	}
+
+	function void_payment()
+	{
+		$payment_id = $this->uri->segment(3);
+		$payment_temp = array("id" => $payment_id, "posp_status" => 'V', "posp_enable" => 0);
+
+		$this->load->model('pos_payment_model','',TRUE);
+		$this->pos_payment_model->edit_payment($payment_temp);
+
+		redirect('pos_payment/view_payment/'.$payment_id, 'refresh');
+	}
+
+	function get_payment_item()
+	{
+    $payment_id = $this->input->post("payment_id");
+
+    $output = array();
+    $index = 0 ;
+		$where = "popi_posp_id = '".$payment_id."'";
+		$where .= " and popi_enable = 1";
+		$result = $this->pos_payment_model->get_time_item_payment($where);
+
+    if (count($result) >0) {
+      foreach($result as $loop) {
+        $output[$index] = "<td><img src='".base_url()."asset/time_picture/".$loop->tiit_picture."' width='60px' height='80px' /></td>";
+		    $output[$index] .= "<td><input type='hidden' name='it_id' id='it_id' value='".$loop->tiit_id."'><input type='hidden' name='it_barcode' id='it_barcode' value='".$loop->tiit_barcode."'>".$loop->tiit_barcode."</td>";
+		    $output[$index] .= "<td>".$loop->tiit_number."-".$loop->tiit_name."<br>".$loop->tiit_brand."<br>".$loop->tiit_description;
+				if ($loop->tiit_serial != "")
+						$output[$index] .= "<br>Serial : ".$loop->tiit_serial;
+
+				$output[$index] .= "</td>";
+				$output[$index] .= "<td><input type='hidden' name='it_srp' id='it_srp' value='".$loop->tiit_srp."'>".number_format($loop->tiit_srp)."</td>";
+	      $output[$index] .= "<td><input type='number' name='it_quantity' id='it_quantity' value='1' style='width: 50px;' onchange='numberWithCommas(this); calculate();'></td>";
+	      $output[$index] .= "<td><input type='number' name='it_discount' id='it_discount' value='0' style='width: 80px;' onchange='calculate();'></td>";
+				$output[$index] .= "<td><input type='number' name='it_dc_percent' id='it_dc_percent' value='0' style='width: 50px;' onchange='numberWithCommas(this); calculate();'></td>";
+				$output[$index] .= "<td><input type='text' name='it_net' id='it_net' value='".number_format($loop->tiit_srp, 2, '.', ',')."' style='width: 100px;text-align: right;font-weight: bold;' disabled></td>";
+
+				$index++;
+      }
+    }
+
+    echo json_encode($output);
+    exit();
 	}
 
 	function print_small_invoice()
@@ -143,7 +207,6 @@ class Pos_payment extends CI_Controller {
       $total_net = $loop->posp_price_net;
       $total_topup = $loop->posp_price_topup;
       $total_tax = $loop->posp_price_tax;
-      $total_paid = $loop->posp_price_paid;
       $cus_name = $loop->posc_name;
       $cus_address = $loop->posc_address;
       $cus_taxid = $loop->posc_taxid;
@@ -155,11 +218,12 @@ class Pos_payment extends CI_Controller {
 			$issue_array = explode('-', $issuedate);
 			$issue_array[0] += 543;
 			$issuedate = $issue_array[2]."/".$issue_array[1]."/".$issue_array[0];
+			$shop_name = $loop->posp_shop_name;
     }
 
 		$where = "popi_posp_id = '".$payment_id."'";
 		$where .= " and popi_enable = 1";
-		$item_array = $this->pos_payment_model->get_item_payment($where);
+		$item_array = $this->pos_payment_model->get_time_item_payment($where);
 
 		$this->load->library('Pdf');
 
@@ -177,7 +241,7 @@ class Pos_payment extends CI_Controller {
 Sathon Bangkok 10120<br>Tel. 02-678-9988 Fax. 02-678-5566<br>Tax ID : 0105555081331';
 
 		$html .= '</td>
-<td width="230" style="text-align: right;">ใบกำกับภาษีอย่างย่อ /<br>ใบเสร็จรับเงิน</td></tr>
+<td width="230" style="text-align: right;">ใบกำกับภาษีอย่างย่อ /<br>ใบเสร็จรับเงิน<br><br>สาขา : '.$shop_name.'</td></tr>
 <tr><td></td><td></td></tr>
 
 <tr><td width="350">เลขที่ : '.$small_invoice_number.'<br>นามลูกค้า : '.$cus_name.'</td><td width="180">วันที่ : '.$issuedate.'<br>พนักงานขาย : '.$saleperson_name.'</td></tr>

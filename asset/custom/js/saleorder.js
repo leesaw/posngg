@@ -1,5 +1,7 @@
 var count_enter_form_input_product = 0;
 var count_list = 0;
+var payment_enter = 0;
+var payment_list = 0;
 
 // type currency
 $(document).ready(function(){
@@ -224,6 +226,33 @@ function RemoveRougeChar(convertString){
           $("#paymentValue").focus();
         }else{
           $("#btnConfirmPayment").prop('disabled', true);
+          var paymentway = $("#paymentWay").val();
+          var paymentvalue = ($("#paymentValue").val()).replace(/,/g, '');
+
+          var element = '<tr id="row_payment'+payment_enter+'"><td><button type="button" id="row'+payment_enter+'" class="btn btn-danger btn-xs" onClick="delete_payment_row('+payment_enter+');"><i class="fa fa-close"></i></button></td>'
+          +'<td><input type="hidden" name="payment_gateway" value="'+paymentway+'">'+paymentway+'</td><td><input type="hidden" name="payment_value" value="'+paymentvalue+'">'+parseFloat(paymentvalue).toFixed(2).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + " บาท"+'</td>'+'</tr>';
+          $('#payment_list > tbody').append(element);
+          payment_enter++;
+          payment_list++;
+
+          $("#btnConfirmPayment").prop('disabled', false);
+          $("#paymentValue").val('');
+          $('#modPayment').modal('toggle');
+
+          setTimeout(function(){
+                    calculate();
+                },300);
+        }
+
+      });
+
+      $("#btnComplete").click(function(){
+        var message = "ต้องการปิดการขาย ใช่หรือไม่ !";
+
+        if (!confirm(message)) {
+          return false;
+        }else{
+          $("#btnComplete").prop('disabled', true);
 
           var item_id = document.getElementsByName('it_id');
           var item_barcode = document.getElementsByName('it_barcode');
@@ -233,9 +262,12 @@ function RemoveRougeChar(convertString){
           var net = document.getElementsByName('it_net');
           var dc_percent = document.getElementsByName('it_dc_percent');
           var dc_topup = $("#hiddenDCTopup").val();
+          var payment_gateway = document.getElementsByName('payment_gateway');
+          var payment_value = document.getElementsByName('payment_value');
 
           // create item array
           var item_array = new Array();
+          var paid = new Array();
           var total_net = 0;
           var total_dc = 0;
           var total_tax = 0;
@@ -253,9 +285,7 @@ function RemoveRougeChar(convertString){
           }
 
           total_tax = (total_net - dc_topup)*0.07/1.07;
-          var payment = { paymentWay: $("#paymentWay").val(),
-                          paymentValue: parseFloat(($("#paymentValue").val()).replace(/,/g, '')),
-                          paymentRemark: $("#paymentRemark").val(),
+          var payment = { paymentRemark: $("#paymentRemark").val(),
                           customer_id: $("#customer_id").val(),
                           saleperson_id: $("#saleperson_id").val(),
                           dc_topup: dc_topup,
@@ -264,17 +294,23 @@ function RemoveRougeChar(convertString){
                           total_tax: total_tax,
                         };
 
+          for(var i=0; i<payment_gateway.length; i++) {
+            paid[i] = {
+              paid_gateway: payment_gateway[i].value,
+              paid_price_paid: payment_value[i].value,
+            };
+          }
+
+
           $.ajax({
     				type : "POST" ,
     				url : link_save_payment ,
-    				data : {item: item_array, payment: payment} ,
+    				data : {item: item_array, payment: payment, paid: paid} ,
     				success : function(data) {
     					if(data > 0)
     					{
                 alert("ทำการบันทึกข้อมูลเรียบร้อยแล้ว !");
-                $("#paymentValue").val("");
-                $("#btnConfirmPayment").attr('disabled', false);
-                $('#modPayment').modal('toggle');
+                $("#btnComplete").attr('disabled', false);
                 window.location = link_view_payment+"/"+data;
     	        }else{
     	        	alert("ไม่สามารถ บันทึกข้อมูลได้ !");
@@ -282,7 +318,7 @@ function RemoveRougeChar(convertString){
     				},
             error: function (textStatus, errorThrown) {
                 alert("เกิดความผิดพลาด !!!");
-                $("#btnConfirmPayment").attr('disabled', false);
+                $("#btnComplete").attr('disabled', false);
             }
     			});
 
@@ -389,13 +425,19 @@ function RemoveRougeChar(convertString){
     }
 
     function calculate() {
-        var count = 0, sum = 0, sum_srp = 0, sum_dc = 0, dc_baht=0;
+        var count = 0, sum = 0, sum_srp = 0, sum_dc = 0, dc_baht=0, remain =0, payment_sum = 0;
         var srp = document.getElementsByName('it_srp');
         var qty = document.getElementsByName('it_quantity');
         var dc = document.getElementsByName('it_discount');
         var net = document.getElementsByName('it_net');
         var dc_percent = document.getElementsByName('it_dc_percent');
         var dc_topup = $("#hiddenDCTopup").val();
+
+        var payment_value = document.getElementsByName('payment_value');
+        for(var i=0; i<payment_value.length; i++) {
+          payment_sum += parseFloat(payment_value[i].value);
+        }
+
         for(var i=0; i<qty.length; i++) {
             if (dc[i].value == "") dc[i].value = 0;
             if (qty[i].value == "") qty[i].value = 0;
@@ -417,17 +459,36 @@ function RemoveRougeChar(convertString){
             net[i].value = (parseFloat(qty[i].value)*parseFloat(srp[i].value) - parseFloat((dc[i].value).replace(/,/g, ''))).toFixed(2).toString().replace(/\B(?=(\d{3})+(?!\d))/g, "," );
         }
         sum -= dc_topup;
+        remain = sum - payment_sum;
         document.getElementById("summary").innerHTML = sum.toFixed(2).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + " บาท";
+        document.getElementById("payment_remain").innerHTML = remain.toFixed(2).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + " บาท";
         document.getElementById("allcount").innerHTML = count.toString().replace(/\B(?=(\d{3})+(?!\d))/g, "," );
         document.getElementById("sum_srp").innerHTML = sum_srp.toFixed(2).toString().replace(/\B(?=(\d{3})+(?!\d))/g, "," );
         document.getElementById("sum_dc").innerHTML = sum_dc.toFixed(2).toString().replace(/\B(?=(\d{3})+(?!\d))/g, "," );
         $('#var_allcount').val(count);
+
+        if (sum > 0 && remain<=0) {
+          $('#btnPayment').addClass('hidden-button');
+          $('#btnComplete').removeClass('hidden-button');
+        }else{
+          $('#btnComplete').addClass('hidden-button');
+          $('#btnPayment').removeClass('hidden-button');
+        }
     }
 
     function delete_item_row(row1)
     {
         count_list--;
         $('#row'+row1).remove();
+        setTimeout(function(){
+                  calculate();
+              },300);
+    }
+
+    function delete_payment_row(row1)
+    {
+        payment_list--;
+        $('#row_payment'+row1).remove();
         setTimeout(function(){
                   calculate();
               },300);

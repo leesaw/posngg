@@ -15,9 +15,6 @@
   font-weight: bold;
   font-size: 16px;
 }
-.hidden-button {
-  display: none;
-}
 </style>
 </head>
 <body class="hold-transition skin-red layout-top-nav">
@@ -111,15 +108,6 @@
                   <a data-toggle="modal" data-target="#modDCTopup" type="button" class="btn btn-danger" name="btnDCTopup" id="btnDCTopup">ส่วนลดท้ายบิล</a>
                 </div>
               </div>
-              <br/>
-              <div class='row'>
-                <div class='col-md-8'>
-                  <div class="form-group">
-                    <label class="col-md-3 control-label" for="paymentRemark">หมายเหตุ </label>
-                    <div class="col-md-9"> <input type="text" class="form-control" id="paymentRemark" name="paymentRemark" value="" /></div>
-                  </div>
-                </div>
-              </div>
             </div>
             <!-- /.box-body -->
           </div>
@@ -146,16 +134,22 @@
                     <input type='hidden' name='customer_id' id='customer_id' value='0'>
                     <input type='text' name='cusName_view' id='cusName_view' class='form-control' value='' disabled>
                   </div>
-                  <!-- <div class='col-md-12'>
+                  <div class='col-md-12'>
                     ที่อยู่
                     <input type='text' name='cusAddress_view' id='cusAddress_view' class='form-control' value='' disabled>
                   </div>
                   <div class='col-md-12'>
                     เลขที่ผู้เสียภาษี
                     <input type='text' name='cusTaxID_view' id='cusTaxID_view' class='form-control' value='' disabled>
-                  </div> -->
+                  </div>
                 </div>
-              <hr/>
+              </div>
+        </div>
+        <div class="box box-primary">
+            <div class="box-header with-border">
+              <h3 class="box-title">พนักงานขาย</h3>
+            </div>
+            <div class="box-body">
               <div class='row'>
                 <div class='col-md-5'>
                   รหัสพนักงาน
@@ -167,26 +161,13 @@
 
                 </div>
                 <div class='col-md-7'>
-                  ชื่อ-นามสกุลพนักงาน
+                  ชื่อ-นามสกุล
                   <input type='text' name='staffName' id='staffName' class='form-control' value='<?php echo $nggu_name; ?>' disabled>
                 </div>
               </div>
-              <hr/>
-              <h3>ชำระเงิน</h3>
-            <div class='row'>
-              <div class='col-md-12'>
-                <table class="table table-condensed" id='payment_list'>
-                  <thead class='text-red'><th></th><th>ยอดคงเหลือ</th><th><div id="payment_remain">0.00</div></th></thead>
-                  <tbody></tbody>
-                </table>
-              </div>
             </div>
-
-          </div>
-        </div>
+      </div>
         <a data-toggle="modal" data-target="#modPayment" type="button" class="btn btn-danger btn-lg btn-block" name="btnPayment" id="btnPayment"><i class='fa fa-shopping-cart'></i> ชำระเงิน</a>
-        <a type="button" class="btn btn-success btn-lg btn-block hidden-button" name="btnComplete" id="btnComplete"><i class='fa fa-thumbs-o-up'></i> ปิดการขาย</a>
-
         </div>
       </div>
       <!-- /.row -->

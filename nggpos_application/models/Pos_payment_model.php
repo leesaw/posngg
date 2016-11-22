@@ -13,7 +13,7 @@ Class Pos_payment_model extends CI_Model
 
   function get_payment($where)
   {
-    $this->db->select('posp_id, posp_issuedate, posp_gateway, posp_price_net, posp_price_paid, posp_price_tax, posp_price_topup, posp_price_discount, posp_status, posp_remark,
+    $this->db->select('posp_id, posp_issuedate, posp_price_net, posp_price_tax, posp_price_topup, posp_price_discount, posp_status, posp_remark,
      posp_dateadd, posp_dateadd_by, posp_updatedate, posp_update_by, posp_shop_name, posp_enable, posp_customer_id, posc_name, posc_address, posc_province, posc_telephone, posc_taxid,
      posp_saleperson_id, nggu_number, nggu_firstname, nggu_lastname, posp_shop_id, posp_small_invoice_number');
     $this->db->from('pos_payment');
@@ -25,13 +25,23 @@ Class Pos_payment_model extends CI_Model
     return $this->db->get()->result();
   }
 
-  function get_item_payment($where)
+  function get_time_item_payment($where)
   {
     $this->db->select('popi_id, popi_posp_id, popi_barcode, popi_item_id, popi_item_name, popi_item_number, popi_item_uom, popi_item_brand, popi_item_description,
      popi_item_srp, popi_item_dc_baht, popi_item_dc_percent, popi_item_net, popi_item_serial, popi_item_qty');
     $this->db->from('pos_payment_item');
+    $this->db->join('time_item', 'popi_id = tiit_id', 'left');
     if ($where != "") $this->db->where($where);
     $this->db->order_by('popi_id', 'asc');
+    return $this->db->get()->result();
+  }
+
+  function get_paid_payment($where)
+  {
+    $this->db->select('paid_id, paid_payment_id, paid_gateway, paid_price_paid, paid_enable');
+    $this->db->from('pos_paid');
+    if ($where != "") $this->db->where($where);
+    $this->db->order_by('paid_id', 'asc');
     return $this->db->get()->result();
   }
 
@@ -60,6 +70,20 @@ Class Pos_payment_model extends CI_Model
   {
     $this->db->insert('pos_payment_item', $item);
 	  return $this->db->insert_id();
+  }
+
+  function insert_paid($paid)
+  {
+    $this->db->insert('pos_paid', $paid);
+    return $this->db->insert_id();
+  }
+
+  function edit_payment($edit)
+  {
+    $this->db->where('posp_id', $edit['id']);
+    unset($edit['id']);
+    $query = $this->db->update('pos_payment', $edit);
+    return $query;
   }
 }
 ?>

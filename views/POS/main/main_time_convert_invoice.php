@@ -44,7 +44,7 @@
       <div class="row">
         <div class='col-md-4'>
           <div class="menutext">
-            นาฬิกา > สั่งขาย > รายละเอียดการขาย
+            นาฬิกา > สั่งขาย > ออกใบกำกับภาษี
           </div>
         </div>
         <div class='col-md-4'></div>
@@ -60,7 +60,7 @@
       <div class="row">
         <div class="col-md-9">
           <div class="box box-success">
-            <div class="box-header with-border">
+            <!-- <div class="box-header with-border">
               <div class='row'>
                 <div class='col-md-4'>
                   <a href="<?php echo site_url("pos_payment/print_small_invoice")."/".$payment_id; ?>" target="_blank" type="button" class="btn btn-primary btn-lg" name="btnSmallInvoice" id="btnSmallInvoice"<?php if ($payment_status != 'N') echo " disabled"; ?>>พิมพ์ใบกำกับภาษีอย่างย่อ</a>
@@ -70,11 +70,11 @@
                   <a type="button" href='<?php echo site_url('pos_payment/convert_invoice')."/".$payment_id; ?>' class="btn btn-danger btn-lg" name="btnInvoice" id="btnInvoice"<?php if ($payment_status != 'N') echo " disabled"; ?>>เปลี่ยนเป็นใบกำกับภาษี</a>
                 </div>
               </div>
-            </div>
+            </div> -->
             <div class="box-body">
               <div class='row'>
                 <div class='col-md-4'>
-                  <label>เลขที่ : </label> <?php echo $small_invoice_number; ?>
+                  <label>เลขที่ใบกำกับภาษีอย่างย่อ : </label> <?php echo $small_invoice_number; ?>
                 </div>
                 <div class='col-md-4'>
                   <label>วันที่ : </label> <?php echo $issuedate; ?>
@@ -144,48 +144,23 @@
                 <div class='row'>
                   <div class='col-md-12'>
                     เลขสมาชิก / เบอร์ติดต่อ
-                    <input type='text' name='cusTelephone_view' id='cusTelephone_view' class='form-control' value='<?php echo $cus_telephone; ?>' disabled>
+                    <input type='text' name='cusTelephone_view' id='cusTelephone_view' class='form-control' value='<?php echo $cus_telephone; ?>'>
                   </div>
                   <div class='col-md-12'>
                     ชื่อ-นามสกุล
                     <input type='hidden' name='customer_id' id='customer_id' value='0'>
-                    <input type='text' name='cusName_view' id='cusName_view' class='form-control' value='<?php echo $cus_name; ?>' disabled>
+                    <input type='text' name='cusName_view' id='cusName_view' class='form-control' value='<?php echo $cus_name; ?>'>
                   </div>
-                  <!-- <div class='col-md-12'>
+                  <div class='col-md-12'>
                     ที่อยู่
-                    <input type='text' name='cusAddress_view' id='cusAddress_view' class='form-control' value='' disabled>
+                    <input type='text' name='cusAddress_view' id='cusAddress_view' class='form-control' value='<?php echo $cus_address; ?>'>
                   </div>
                   <div class='col-md-12'>
                     เลขที่ผู้เสียภาษี
-                    <input type='text' name='cusTaxID_view' id='cusTaxID_view' class='form-control' value='' disabled>
-                  </div> -->
+                    <input type='text' name='cusTaxID_view' id='cusTaxID_view' class='form-control' value='<?php echo $cus_taxid; ?>'>
+                  </div>
                 </div>
-              <hr/>
-              <div class='row'>
-                <div class='col-md-5'>
-                  รหัสพนักงาน
-                  <input type='text' name='staffCode' id='staffCode' class='form-control' value='<?php echo $saleperson_number; ?>' disabled>
 
-                </div>
-                <div class='col-md-7'>
-                  ชื่อ-นามสกุลพนักงาน
-                  <input type='text' name='staffName' id='staffName' class='form-control' value='<?php echo $saleperson_name; ?>' disabled>
-                </div>
-              </div>
-              <hr/>
-              <h3>ชำระเงิน</h3>
-            <div class='row'>
-              <div class='col-md-12'>
-                <table class="table table-condensed" id='payment_list'>
-                  <tbody>
-                    <?php foreach($paid_array as $loop) { ?>
-                      <tr><td><?php echo $loop->paid_gateway; ?></td><td><?php echo number_format($loop->paid_price_paid, 2,'.',','); ?></td></tr>
-
-                    <?php } ?>
-                  </tbody>
-                </table>
-              </div>
-            </div>
               </div>
         </div>
     </div>

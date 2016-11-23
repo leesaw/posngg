@@ -14,4 +14,9 @@ $(document).ready(function() {
     return confirm(message);
   });
 
+  $("#btnInvoice").click(function() {
+    var message = "ต้องการเปลี่ยนเป็นใบกำกับภาษี ใช่หรือไม่ !";
+    return confirm(message);
+  });
+
 });

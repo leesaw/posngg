@@ -35,6 +35,10 @@
 			$issue_array[0] += 543;
 			$issuedate = $issue_array[2]."/".$issue_array[1]."/".$issue_array[0];
     }
+
+    foreach($shop_array as $loop) {
+      $print_tax = $loop->posh_print_tax;
+    }
   ?>
   <!-- Full Width Column -->
   <!-- Content Wrapper. Contains page content -->
@@ -67,17 +71,17 @@
                 </div>
                 <div class='col-md-8' style='text-align:right;'>
                   <a type="button" href='<?php echo site_url('pos_payment/void_payment')."/".$payment_id; ?>' class="btn bg-orange btn-lg" name="btnVoid" id="btnVoid"<?php if ($payment_status != 'N') echo " disabled"; ?>>ยกเลิกการขาย (Void)</a>&nbsp;&nbsp;&nbsp;&nbsp;
-                  <a type="button" href='<?php echo site_url('pos_payment/convert_invoice')."/".$payment_id; ?>' class="btn btn-danger btn-lg" name="btnInvoice" id="btnInvoice"<?php if ($payment_status != 'N') echo " disabled"; ?>>เปลี่ยนเป็นใบกำกับภาษี</a>
+                  <?php if ($print_tax != 0) { ?><a type="button" href='<?php echo site_url('pos_payment/convert_invoice')."/".$payment_id; ?>' class="btn btn-danger btn-lg" name="btnInvoice" id="btnInvoice"<?php if ($payment_status != 'N') echo " disabled"; ?>>เปลี่ยนเป็นใบกำกับภาษี</a><?php } ?>
                 </div>
               </div>
             </div>
             <div class="box-body">
               <div class='row'>
                 <div class='col-md-4'>
-                  <label>เลขที่ : </label> <?php echo $small_invoice_number; ?>
+                  <label>เลขที่ใบกำกับภาษีอย่างย่อ : </label> <?php echo $small_invoice_number; ?>
                 </div>
                 <div class='col-md-4'>
-                  <label>วันที่ : </label> <?php echo $issuedate; ?>
+                  <label>วันที่ออกใบกำกับภาษีอย่างย่อ : </label> <?php echo $issuedate; ?>
                 </div>
                 <div class='col-md-4'>
                   <label>สถานะ : </label> <?php if ($payment_status == 'N') echo "<label class='text-green'>ปิดการขาย</label>";
@@ -85,6 +89,7 @@
                 </div>
               </div>
               <br/>
+              
               <div class='row'>
                 <div class='col-md-12 table-responsive'>
                   <table class='table table-bordered' id='itemlist'>

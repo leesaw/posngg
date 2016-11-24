@@ -53,8 +53,6 @@ Class Pos_payment_model extends CI_Model
      $this->db->from('pos_payment');
      $this->db->where("posp_dateadd >=",$start);
      $this->db->where("posp_dateadd <=",$end);
-     $this->db->where("posp_enable", 1);
-     $this->db->where("posp_status", 'N');
      if ($shop != "") $this->db->where("posp_shop_id", $shop);
      $query = $this->db->get();
      return $query->num_rows();

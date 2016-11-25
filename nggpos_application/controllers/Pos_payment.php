@@ -140,13 +140,22 @@ class Pos_payment extends CI_Controller {
 		$where .= " and paid_enable = 1";
 		$data['paid_array'] = $this->pos_payment_model->get_paid_payment($where);
 
+		$where = "pinv_payment_id = '".$payment_id."' and pinv_enable = 1";
+    $this->load->model('pos_invoice_model','',TRUE);
+    $check_payment = $this->pos_invoice_model->get_invoice($where);
+    $had_payment = 0;
+    foreach($check_payment as $loop) {
+      $had_payment = $loop->pinv_id;
+    }
+		$data['had_payment'] = $had_payment;
+
 		$shop_id = $this->session->userdata('sessshopid');
 		$this->load->model('shop_model','',TRUE);
 		$where = "posh_id = '".$shop_id."'";
 		$data['shop_array'] = $this->shop_model->get_shop($where);
 
 		$data['title'] = programname.version." - Payment view";
-		$this->load->view('POS/main/main_time_view_payment', $data);
+		$this->load->view('POS/time/main_time_view_payment', $data);
 	}
 
 	function void_payment()
@@ -220,73 +229,11 @@ class Pos_payment extends CI_Controller {
 			$data['paid_array'] = $this->pos_payment_model->get_paid_payment($where);
 			$data['shop_array'] = $shop_array;
 
-			$data['title'] = programname.version." - Payment view";
-			$this->load->view('POS/main/main_time_convert_invoice', $data);
+			$data['title'] = programname.version." - Convert Invoice";
+			$this->load->view('POS/time/main_time_convert_invoice', $data);
 		}else{
 			redirect('pos_payment/view_payment/'.$payment_id, 'refresh');
 		}
-	}
-
-	function convert_invoice_save()
-	{
-		$payment_id = $this->input->post('payment_id');
-		$customer_id = $this->input->post('customer_id');
-		$customer_name = $this->input->post('cusName');
-		$customer_telephone = $this->input->post('cusTelephone');
-		$customer_address = $this->input->post('cusAddress');
-		$customer_taxid = $this->input->post('cusTaxID');
-
-		$where = "";
-		$where .= "posp_id = '".$payment_id."'";
-		$this->load->model('pos_payment_model','',TRUE);
-		$payment_array = $this->pos_payment_model->get_payment($where);
-
-		foreach($payment_array as $loop) {
-			$payment_id = $loop->posp_id;
-      $total_net = $loop->posp_price_net;
-      $total_topup = $loop->posp_price_topup;
-      $total_tax = $loop->posp_price_tax;
-      $saleperson_number = $loop->nggu_number;
-      $saleperson_name = $loop->nggu_firstname." ".$loop->nggu_lastname;
-			$small_invoice_number = $loop->posp_small_invoice_number;
-			$issuedate = $loop->posp_issuedate;
-		}
-
-		$month = date("Y-m");
-    $year_number = date("y");
-		$year_number = (int)$year_number + 43;
-		$month_number = date("m");
-		$shop_check_number = $shop_id;
-
-		$this->load->model('pos_payment_model','',TRUE);
-    $number = $this->pos_payment_model->getMaxNumber_invoice($month, $shop_check_number);
-    $number++;
-
-  	$number = "IVN".$year_number.$month_number.str_pad($number, 4, '0', STR_PAD_LEFT);
-
-		// insert data into pos_payment and get posp_id to insert pos payment item
-    $payment_temp = array(
-				"posp_issuedate" => $date_today,
-				"posp_small_invoice_number" => $number,
-				"posp_price_net" => $payment['total_net'],
-				"posp_price_discount" => $payment['total_dc'],
-				"posp_price_topup" => $payment['dc_topup'],
-				"posp_price_tax" => $payment['total_tax'],
-				"posp_customer_id" => $payment['customer_id'],
-				"posp_saleperson_id" => $payment['saleperson_id'],
-				"posp_status" => 'N',
-				"posp_remark" => $payment['paymentRemark'],
-				"posp_dateadd" => $datetime_now,
-				"posp_dateadd_by" => $user_id,
-				"posp_shop_id" => $shop_id,
-				"posp_shop_name" => $shop_name,
-				"posp_enable" => 1,
-		);
-		$posp_id = $this->pos_payment_model->insert_new_payment($payment_temp);
-
-		$where = "popi_posp_id = '".$payment_id."'";
-		$where .= " and popi_enable = 1";
-		$data['item_array'] = $this->pos_payment_model->get_time_item_payment($where);
 	}
 
 	function print_small_invoice()
@@ -390,15 +337,22 @@ if ($shop_fax != "") $html .= "Fax. ".$shop_fax;
 				$html .= '<br pagebreak="true"/>';
 				$html .= '
 						<html><body><table border="0"><tbody><tr>
-				<td width="300">NGG TIMEPIECES COMPANY LIMITED<br>
-				27 Soi Pattanasin Naradhiwas Rajanagarindra Rd. Thungmahamek
-				Sathon Bangkok 10120<br>Tel. 02-678-9988 Fax. 02-678-5566<br>Tax ID : 0105555081331';
+				<td width="300">'.$shop_company.'<br>
+				'.$shop_address1.'<br/>
+				'.$shop_address2.'<br>Tax ID : '.$shop_taxid.' ';
+
+				if ($shop_branch_no == 0) $html .= 'Head Office';
+				else if ($shop_branch_no > 0) $html .= 'Branch No. '.str_pad($shop_branch_no, 5, '0', STR_PAD_LEFT);
+
+				$html .= '<br/>';
+				if ($shop_telephone != "") $html .= "Tel. ".$shop_telephone." ";
+				if ($shop_fax != "") $html .= "Fax. ".$shop_fax;
 
 						$html .= '</td>
-				<td width="230" style="text-align: right;">ใบกำกับภาษีอย่างย่อ /<br>ใบเสร็จรับเงิน</td></tr>
+				<td width="230" style="text-align: right;">ใบกำกับภาษีอย่างย่อ /<br>ใบเสร็จรับเงิน<br><br>สาขา : '.$shop_name.'</td></tr>
 				<tr><td></td><td></td></tr>
 
-				<tr><td width="350">เลขที่ <br>นามลูกค้า </td><td width="180">วันที่  <br>พนักงานขาย : $saleperson_name</td></tr>
+				<tr><td width="350">เลขที่ : '.$small_invoice_number.'<br>นามลูกค้า : '.$cus_name.'</td><td width="180">วันที่ : '.$issuedate.'<br>พนักงานขาย : '.$saleperson_name.'</td></tr>
 				</tbody></table>
 				<br/><br/>
 				<table border="0">

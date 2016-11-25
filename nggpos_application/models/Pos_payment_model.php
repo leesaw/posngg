@@ -28,7 +28,7 @@ Class Pos_payment_model extends CI_Model
   function get_time_item_payment($where)
   {
     $this->db->select('popi_id, popi_posp_id, popi_barcode, popi_item_id, popi_item_name, popi_item_number, popi_item_uom, popi_item_brand, popi_item_description,
-     popi_item_srp, popi_item_dc_baht, popi_item_dc_percent, popi_item_net, popi_item_serial, popi_item_qty');
+     popi_item_srp, popi_item_dc_baht, popi_item_dc_percent, popi_item_net, popi_item_serial, popi_item_qty, popi_enable');
     $this->db->from('pos_payment_item');
     $this->db->join('time_item', 'popi_id = tiit_id', 'left');
     if ($where != "") $this->db->where($where);

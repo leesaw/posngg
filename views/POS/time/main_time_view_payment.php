@@ -23,7 +23,6 @@
       $total_topup = $loop->posp_price_topup;
       $total_tax = $loop->posp_price_tax;
       $payment_status = $loop->posp_status;
-      $cus_id = $loop->posp_customer_id;
       $cus_name = $loop->posc_name;
       $cus_address = $loop->posc_address;
       $cus_taxid = $loop->posc_taxid;
@@ -39,14 +38,6 @@
 
     foreach($shop_array as $loop) {
       $print_tax = $loop->posh_print_tax;
-      $shop_name = $loop->posh_name;
-      $shop_address1 = $loop->posh_address1;
-      $shop_address2 = $loop->posh_address2;
-      $shop_telephone = $loop->posh_telephone;
-      $shop_fax = $loop->posh_fax;
-      $shop_taxid = $loop->posh_taxid;
-      $shop_company = $loop->posh_company;
-      $shop_branch_no = $loop->posh_branch_no;
     }
   ?>
   <!-- Full Width Column -->
@@ -57,7 +48,7 @@
       <div class="row">
         <div class='col-md-4'>
           <div class="menutext">
-            นาฬิกา > ออกใบกำกับภาษี
+            นาฬิกา > สั่งขาย > รายละเอียดการขาย
           </div>
         </div>
         <div class='col-md-4'></div>
@@ -73,6 +64,17 @@
       <div class="row">
         <div class="col-md-9">
           <div class="box box-success">
+            <div class="box-header with-border">
+              <div class='row'>
+                <div class='col-md-4'>
+                  <?php if ($payment_status == 'N') { ?><a href="<?php echo site_url("pos_payment/print_small_invoice")."/".$payment_id; ?>" target="_blank" type="button" class="btn btn-primary btn-lg" name="btnSmallInvoice" id="btnSmallInvoice">พิมพ์ใบกำกับภาษีอย่างย่อ</a><?php } ?>
+                </div>
+                <div class='col-md-8' style='text-align:right;'>
+                  <?php if ($payment_status == 'N') { ?><a type="button" href='<?php echo site_url('pos_payment/void_payment')."/".$payment_id; ?>' class="btn bg-orange btn-lg" name="btnVoid" id="btnVoid">ยกเลิกการขาย (Void)</a><?php } ?>&nbsp;&nbsp;&nbsp;&nbsp;
+                  <?php if ($print_tax != 0 && $had_payment == 0 && $payment_status == 'N') { ?><a type="button" href='<?php echo site_url('pos_payment/convert_invoice')."/".$payment_id; ?>' class="btn btn-danger btn-lg" name="btnInvoice" id="btnInvoice">เปลี่ยนเป็นใบกำกับภาษี</a><?php } ?>
+                </div>
+              </div>
+            </div>
             <div class="box-body">
               <div class='row'>
                 <div class='col-md-4'>
@@ -83,26 +85,12 @@
                 </div>
                 <div class='col-md-4'>
                   <label>สถานะ : </label> <?php if ($payment_status == 'N') echo "<label class='text-green'>ปิดการขาย</label>";
-                  else if ($payment_status == 'V') echo "<label class='text-red'>ยกเลิกแล้ว</label>"; ?>
+                  else if ($payment_status == 'V') echo "<label class='text-red'>ยกเลิกแล้ว</label>";
+                  else if ($payment_status == 'T') echo "<label class='text-orange'>เปลี่ยนเป็นใบกำกับภาษีแบบเต็มแล้ว</label>"; ?>
                 </div>
               </div>
               <br/>
-              <div class='row'>
-                <div class='col-md-8'>
-                  <?php echo $shop_company."<br/>".$shop_address1."<br/>".$shop_address2."<br/>Tax ID. ".$shop_taxid." ";
-                  if ($shop_branch_no == 0) echo "Head Office";
-                  else if ($shop_branch_no > 0) echo "Branch No. ".str_pad($shop_branch_no, 5, '0', STR_PAD_LEFT);
-                  echo "<br/>";
-                  if ($shop_telephone != "") echo "Tel. ".$shop_telephone." ";
-                  if ($shop_fax != "") echo "Fax. ".$shop_fax;
 
-                  ?>
-                </div>
-                <div class='col-md-4'>
-
-                </div>
-              </div>
-              <br/>
               <div class='row'>
                 <div class='col-md-12 table-responsive'>
                   <table class='table table-bordered' id='itemlist'>
@@ -154,9 +142,7 @@
         </div>
 
         <div class='col-md-3'>
-        <form name="frmCustomer" action="<?php echo site_url("pos_payment/convert_invoice_save")."/".$payment_id; ?>" method="post">
-          <input type="hidden" name="payment_id" value="<?php echo $payment_id; ?>">
-          <div class="box box-danger">
+          <div class="box box-solid">
               <div class="box-header with-border">
                 <h3 class="box-title">ข้อมูลลูกค้า</h3>
               </div>
@@ -164,35 +150,51 @@
                 <div class='row'>
                   <div class='col-md-12'>
                     เลขสมาชิก / เบอร์ติดต่อ
-                    <div class="form-group has-feedback">
-                      <input type='text' name='cusTelephone' id='cusTelephone' class='form-control' value='<?php echo $cus_telephone; ?>'>
-                      <span class="form-control-feedback"><i class="fa fa-search" aria-hidden="true"></i></span>
-                    </div>
+                    <input type='text' name='cusTelephone_view' id='cusTelephone_view' class='form-control' value='<?php echo $cus_telephone; ?>' disabled>
                   </div>
                   <div class='col-md-12'>
-                    ชื่อ-นามสกุล <b class='text-red'>*</b>
-                    <input type="hidden" name="customer_id" id="customer_id" value="<?php echo $cus_id; ?>">
-                    <input type='text' name='cusName' id='cusName' class='form-control' value='<?php echo $cus_name; ?>'>
+                    ชื่อ-นามสกุล
+                    <input type='hidden' name='customer_id' id='customer_id' value='0'>
+                    <input type='text' name='cusName_view' id='cusName_view' class='form-control' value='<?php echo $cus_name; ?>' disabled>
+                  </div>
+                  <!-- <div class='col-md-12'>
+                    ที่อยู่
+                    <input type='text' name='cusAddress_view' id='cusAddress_view' class='form-control' value='' disabled>
                   </div>
                   <div class='col-md-12'>
-                    ที่อยู่ <b class='text-red'>*</b>
-                    <input type='text' name='cusAddress' id='cusAddress' class='form-control' value='<?php echo $cus_address; ?>'>
-                  </div>
-                  <div class='col-md-12'>
-                    เลขที่ผู้เสียภาษี / Passport <b class='text-red'>*</b>
-                    <input type='text' name='cusTaxID' id='cusTaxID' class='form-control' value='<?php echo $cus_taxid; ?>'>
-                  </div>
+                    เลขที่ผู้เสียภาษี
+                    <input type='text' name='cusTaxID_view' id='cusTaxID_view' class='form-control' value='' disabled>
+                  </div> -->
                 </div>
+              <hr/>
+              <div class='row'>
+                <div class='col-md-5'>
+                  รหัสพนักงาน
+                  <input type='text' name='staffCode' id='staffCode' class='form-control' value='<?php echo $saleperson_number; ?>' disabled>
 
+                </div>
+                <div class='col-md-7'>
+                  ชื่อ-นามสกุลพนักงาน
+                  <input type='text' name='staffName' id='staffName' class='form-control' value='<?php echo $saleperson_name; ?>' disabled>
+                </div>
+              </div>
+              <hr/>
+              <h3>ชำระเงิน</h3>
+            <div class='row'>
+              <div class='col-md-12'>
+                <table class="table table-condensed" id='payment_list'>
+                  <tbody>
+                    <?php foreach($paid_array as $loop) { ?>
+                      <tr><td><?php echo $loop->paid_gateway; ?></td><td><?php echo number_format($loop->paid_price_paid, 2,'.',','); ?></td></tr>
+
+                    <?php } ?>
+                  </tbody>
+                </table>
+              </div>
+            </div>
               </div>
         </div>
-
-          <button href="<?php echo site_url("pos_payment/convert_invoice_save")."/".$payment_id; ?>" type="submit" name="btnSaveInvoice" id="btnSaveInvoice" class="btn btn-success btn-block btn-lg"><i class="fa fa-save"></i> บันทึก</button>
-          <br/><br/>
-          <a href="<?php echo site_url("pos_payment/view_payment")."/".$payment_id; ?>" type="button" class="btn btn-warning btn-block btn-lg"><i class="fa fa-arrow-left"></i> ยกเลิก</a>
-
-        </form>
-      </div>
+    </div>
       </div>
       <!-- /.row -->
 
@@ -207,9 +209,9 @@
 
 <?php $this->load->view('includes/footer'); ?>
 <!-- View Sale Order Function -->
-<script src="<?php echo base_url(); ?>asset/custom/js/new_invoice.min.js"></script>
+<script src="<?php echo base_url(); ?>asset/custom/js/view_saleorder.min.js"></script>
 <script>
-var link_customer = '<?php echo site_url('pos_customer/check_customer'); ?>';
+
 
 </script>
 </body>

@@ -24,8 +24,8 @@ class Pos_time_sale extends CI_Controller {
 		$data['sale_person'] = $this->users_model->get_users($where);
 
 		$data['title'] = programname.version." - Main";
-		$this->load->view('POS/main/main_time_pos', $data);
+		$this->load->view('POS/time/main_time_pos', $data);
 	}
 
-	
+
 }

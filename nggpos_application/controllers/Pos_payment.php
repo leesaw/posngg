@@ -236,6 +236,28 @@ class Pos_payment extends CI_Controller {
 		}
 	}
 
+	function print_slip_small_invoice()
+	{
+		$payment_id = $this->uri->segment(3);
+		$where = "";
+		$where .= "posp_id = '".$payment_id."' and posp_enable = 1";
+
+		$this->load->model('pos_payment_model','',TRUE);
+		$data['payment_array'] = $this->pos_payment_model->get_payment($where);
+
+		$where = "popi_posp_id = '".$payment_id."'";
+		$where .= " and popi_enable = 1";
+		$data['item_array'] = $this->pos_payment_model->get_time_item_payment($where);
+
+		$shop_id = $this->session->userdata('sessshopid');
+		$this->load->model('shop_model','',TRUE);
+		$where = "posh_id = '".$shop_id."'";
+		$data['shop_array'] = $this->shop_model->get_shop($where);
+
+		$data['title'] = programname.version." - Payment view";
+		$this->load->view('POS/print/slip_small_invoice', $data);
+	}
+
 	function print_small_invoice()
 	{
 		$payment_id = $this->uri->segment(3);

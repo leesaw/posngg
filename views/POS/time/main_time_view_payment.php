@@ -67,7 +67,7 @@
             <div class="box-header with-border">
               <div class='row'>
                 <div class='col-md-4'>
-                  <?php if ($payment_status == 'N') { ?><a href="<?php echo site_url("pos_payment/print_small_invoice")."/".$payment_id; ?>" target="_blank" type="button" class="btn btn-primary btn-lg" name="btnSmallInvoice" id="btnSmallInvoice">พิมพ์ใบกำกับภาษีอย่างย่อ</a><?php } ?>
+                  <?php if ($payment_status == 'N') { ?><a href="<?php echo site_url("pos_payment/print_slip_small_invoice")."/".$payment_id; ?>" target="_blank" type="button" class="btn btn-primary btn-lg" name="btnSmallInvoice" id="btnSmallInvoice">พิมพ์ใบกำกับภาษีอย่างย่อ</a><?php } ?>
                 </div>
                 <div class='col-md-8' style='text-align:right;'>
                   <?php if ($payment_status == 'N') { ?><a type="button" href='<?php echo site_url('pos_payment/void_payment')."/".$payment_id; ?>' class="btn bg-orange btn-lg" name="btnVoid" id="btnVoid">ยกเลิกการขาย (Void)</a><?php } ?>&nbsp;&nbsp;&nbsp;&nbsp;

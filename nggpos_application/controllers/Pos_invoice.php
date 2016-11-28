@@ -81,7 +81,7 @@ class Pos_invoice extends CI_Controller {
       $number = $this->pos_invoice_model->getMaxNumber_invoice($month, $shop_check_number);
       $number++;
 
-    	$number = "IVN".$year_number.$month_number.str_pad($number, 4, '0', STR_PAD_LEFT);
+    	$number = "IVN-".$shop_branch_no."-".$year_number.$month_number.str_pad($number, 4, '0', STR_PAD_LEFT);
 
   		// insert data into pos_payment and get posp_id to insert pos payment item
       $invoice_temp = array(
@@ -339,7 +339,246 @@ if ($shop_fax != "") $html .= "Fax. ".$shop_fax;
         if ($shop_fax != "") $html .= "Fax. ".$shop_fax;
 
 						$html .= '</td>
-				<td width="230" style="text-align: right;">ใบกำกับภาษี<br><br>สาขา : '.$shop_name.'</td></tr>
+				<td width="230" style="text-align: right;"><b style="font-size: 20pt">ใบกำกับภาษี /<br/>ใบเสร็จรับเงิน</b><br/><b style="font-size: 16pt">ต้นฉบับ</b></td></tr>
+				<tr><td></td><td></td></tr>
+
+        <tr><td width="350">นามลูกค้า : '.$cus_name.'<br>ที่อยู่ : '.$cus_address.'<br>เลขประจำตัวผู้เสียภาษี : '.$cus_taxid.'</td><td width="180">เลขที่ : '.$invoice_number.'<br>วันที่ออก : '.$issuedate.'<br>อ้างอิงใบกำกับภาษีอย่างย่อ : '.$small_invoice_number.'</td></tr>
+        </tbody></table>
+				<br/><br/>
+				<table border="0">
+				<thead>
+					<tr>
+						<th width="25" style="border-top:1px solid black;border-left:1px solid black;border-bottom:1px solid black;text-align:center;">No.</th>
+						<th width="200" style="border-top:1px solid black;border-left:1px solid black;border-bottom:1px solid black;text-align:center;">รายละเอียดสินค้า</th>
+						<th width="40" style="border-top:1px solid black;border-left:1px solid black;border-bottom:1px solid black;text-align:center;">จำนวน</th>
+						<th width="85" style="border-top:1px solid black;border-left:1px solid black;border-bottom:1px solid black;text-align:center;">หน่วยละ</th>
+						<th width="85" style="border-top:1px solid black;border-left:1px solid black;border-bottom:1px solid black;text-align:center;">ส่วนลด</th>
+						<th width="105" style="border-top:1px solid black;border-right:1px solid black;border-left:1px solid black;border-bottom:1px solid black;text-align:center;">จำนวนเงิน</th>
+					</tr>
+				</thead><tbody>';
+			}
+			$html .= '<tr><td width="25" style="text-align:center;border-left:1px solid black;">'.$no.'</td><td width="10" style="border-left:1px solid black;"></td><td width="190">'.$loop->pini_barcode.'<br/>'
+				.$loop->pini_item_number."-".$loop->pini_item_name;
+				if ($loop->pini_item_serial != "")	$html .= "<br>Serial : ".$loop->pini_item_serial; else $html .= "<br>";
+				$html .= '</td><td width="40" style="text-align:center;border-left:1px solid black;">'.$loop->pini_item_qty.'</td>
+				<td width="85" style="text-align:center;border-left:1px solid black;">'.number_format($loop->pini_item_srp, 2,'.',',').'</td>
+				<td width="85" style="text-align:center;border-left:1px solid black;">';
+				if ($loop->pini_item_dc_baht > 0) $html .= number_format($loop->pini_item_dc_baht, 2,'.',',');
+				// if ($loop->popi_item_dc_percent > 0) $html .= '<br>( '.number_format($loop->popi_item_dc_percent).'% )';
+				$html .= '</td>
+				<td width="105" style="text-align:right;border-left:1px solid black;border-right:1px solid black;">'.number_format($loop->pini_item_net, 2,'.',',').'&nbsp;&nbsp;&nbsp;&nbsp;</td>
+				</tr>';
+
+
+
+				$qty += $loop->pini_item_qty;
+		}
+
+    // discount topup
+		if($total_topup > 0) {
+			$html .= '<tr><td width="25" style="text-align:center;border-left:1px solid black;"></td><td width="10" style="border-left:1px solid black;"></td><td width="190">ส่วนลดท้ายบิล</td><td width="40" style="text-align:center;border-left:1px solid black;"></td>
+				<td width="85" style="text-align:center;border-left:1px solid black;"></td>
+				<td width="85" style="text-align:center;border-left:1px solid black;"></td>
+				<td width="105" style="text-align:right;border-left:1px solid black;border-right:1px solid black;">- '.number_format($total_topup, 2,'.',',').'&nbsp;&nbsp;&nbsp;&nbsp;</td>
+				</tr>';
+		}else{
+			$html .= '<tr><td width="25" style="text-align:center;border-left:1px solid black;"></td><td width="10" style="border-left:1px solid black;"></td><td width="190"></td><td width="40" style="text-align:center;border-left:1px solid black;"></td>
+				<td width="85" style="text-align:center;border-left:1px solid black;"></td>
+				<td width="85" style="text-align:center;border-left:1px solid black;"></td>
+				<td width="105" style="text-align:right;border-left:1px solid black;border-right:1px solid black;"></td>
+				</tr>';
+		}
+
+    if ($no <= ($max_item*$total_page)) {
+			for($j=$no; $j<($max_item*$total_page); $j++) {
+				$html .= '<tr><td width="25" style="text-align:center;border-left:1px solid black;"></td><td width="10" style="border-left:1px solid black;"></td><td width="190"><br><br><br></td>
+				<td width="40" style="text-align:center;border-left:1px solid black;"></td><td width="85" style="text-align:center;border-left:1px solid black;">
+				</td><td width="85" style="text-align:center;border-left:1px solid black;"></td><td width="105" style="text-align:right;border-left:1px solid black;border-right:1px solid black;"></td></tr>';
+			}
+		}
+
+    if ($total_page > 1) {
+      $current_page++;
+      $html .= '<tr><td width="25" style="text-align:center;border-left:1px solid black;"></td><td width="10" style="border-left:1px solid black;"></td><td width="190">';
+      $html .= '</td><td width="40" style="text-align:center;border-left:1px solid black;"></td>
+      <td width="85" style="text-align:center;border-left:1px solid black;"></td>
+      <td width="85" style="text-align:center;border-left:1px solid black;">';
+      $html .= '</td>
+      <td width="105" style="text-align:right;border-left:1px solid black;border-right:1px solid black;">&nbsp;&nbsp;&nbsp;&nbsp;</td>
+      </tr>';
+      $html .= '<tr><td width="25" style="text-align:center;border-left:1px solid black;"></td><td width="10" style="border-left:1px solid black;"></td><td width="190" style="text-align: center;">หน้า '.$current_page.' / '.$total_page;
+      $html .= '</td><td width="40" style="text-align:center;border-left:1px solid black;"></td>
+      <td width="85" style="text-align:center;border-left:1px solid black;"></td>
+      <td width="85" style="text-align:center;border-left:1px solid black;">';
+      $html .= '</td>
+      <td width="105" style="text-align:right;border-left:1px solid black;border-right:1px solid black;">&nbsp;&nbsp;&nbsp;&nbsp;</td>
+      </tr>';
+    }
+
+		// sum qty & total price no vat
+		$html .= '<tr><td colspan="3" style="border-top:1px solid black;border-left:1px solid black;border-right:1px solid black;text-align:right;">จำนวน &nbsp;&nbsp;&nbsp;</td>
+		<td style="border-top:1px solid black;border-left:1px solid black;border-right:1px solid black;text-align:center;">'.$qty.'</td>
+		<td colspan="2" style="border-top:1px solid black;border-left:1px solid black;border-right:1px solid black;text-align:right;">ราคาไม่รวมภาษีมูลค่าเพิ่ม &nbsp;&nbsp;&nbsp;</td>
+		<td style="border-top:1px solid black;border-left:1px solid black;border-right:1px solid black;text-align:right;">'.number_format($total_net-$total_topup-$total_tax, 2,'.',',').' &nbsp;&nbsp;&nbsp;</td>
+		</tr>';
+		// vat
+		$html .= '<tr>
+		<td colspan="6" style="border-top:1px solid black;border-left:1px solid black;border-right:1px solid black;text-align:right;">จํานวนภาษีมูลค่าเพิ่ม 7 % &nbsp;&nbsp;&nbsp;</td>
+		<td style="border-top:1px solid black;border-left:1px solid black;border-right:1px solid black;text-align:right;">'.number_format($total_tax, 2,'.',',').' &nbsp;&nbsp;&nbsp;</td>
+		</tr>';
+		// total price vat
+		$html .= '<tr><td colspan="4" style="border-top:1px solid black;border-left:1px solid black;">&nbsp;&nbsp;('.$this->num2thai($total_net-$total_topup).')</td>
+		<td colspan="2" style="border-top:1px solid black;border-right:1px solid black;text-align:right;">จํานวนเงินรวมทั้งสิ้น &nbsp;&nbsp;&nbsp;</td>
+		<td style="border-top:1px solid black;border-left:1px solid black;border-right:1px solid black;text-align:right;">'.number_format($total_net-$total_topup, 2,'.',',').' &nbsp;&nbsp;&nbsp;</td>
+		</tr>';
+
+		$html .= '<tr><td colspan="7" style="border-top:1px solid black;"></td></tr></tbody></table>';
+
+    $html .= '<table style="border-bottom:1px solid black; border-spacing:0px 0px;">
+<tbody>
+<tr style="">
+<td width="180" align="center" style="border-left:1px solid black; border-top:1px solid black;">ได้รับสินค้าตามรายการถูกต้องแล้ว</td>
+<td width="180" align="center" style="border-left:1px solid black; border-top:1px solid black;"> </td>
+<td width="180" align="center" style="border-left:1px solid black; border-top:1px solid black; border-right:1px solid black;"> </td>
+</tr>
+<tr>
+<td height="30" align="center" style="border-left:1px solid black;">&nbsp;</td><td align="center" style="border-left:1px solid black;"> </td>
+<td align="center" style="border-left:1px solid black; border-right:1px solid black;"> </td>
+</tr>
+<tr>
+<td align="center" style="border-left:1px solid black;">......................................</td><td align="center" style="border-left:1px solid black;">......................................</td>
+<td align="center" style="border-left:1px solid black; border-right:1px solid black;">......................................</td>
+</tr>
+<tr>
+<td align="center" style="border-left:1px solid black;">วันที่ / Date......................................</td><td align="center" style="border-left:1px solid black;">วันที่ / Date......................................</td>
+<td align="center" style="border-left:1px solid black; border-right:1px solid black;">วันที่ / Date......................................</td>
+</tr>
+<tr>
+<td align="center" style="border-left:1px solid black; border-top:1px solid black;">ผู้รับของ / Receiver</td><td align="center" style="border-left:1px solid black; border-top:1px solid black;">ผู้ส่งของ / Delivered By</td>
+<td align="center" style="border-left:1px solid black; border-right:1px solid black; border-top:1px solid black;">ผู้รับเงิน / Collector</td>
+</tr>
+<tbody>
+</table>';
+
+		// COPY
+		$html .= '<br pagebreak="true"/>';
+
+		$html .= '<table border="0"><tbody><tr>
+<td width="300">'.$shop_company.'<br>
+'.$shop_address1.'<br/>
+'.$shop_address2.'<br>Tax ID : '.$shop_taxid.' ';
+
+if ($shop_branch_no == 0) $html .= 'Head Office';
+else if ($shop_branch_no > 0) $html .= 'Branch No. '.str_pad($shop_branch_no, 5, '0', STR_PAD_LEFT);
+
+$html .= '<br/>';
+if ($shop_telephone != "") $html .= "Tel. ".$shop_telephone." ";
+if ($shop_fax != "") $html .= "Fax. ".$shop_fax;
+
+		$html .= '</td>
+<td width="230" style="text-align: right;"><b style="font-size: 20pt">ใบกำกับภาษี /<br/>ใบเสร็จรับเงิน</b><br/><b style="font-size: 16pt">สำเนา</b></td></tr>
+<tr><td></td><td></td></tr>
+
+<tr><td width="350">นามลูกค้า : '.$cus_name.'<br>ที่อยู่ : '.$cus_address.'<br>เลขประจำตัวผู้เสียภาษี : '.$cus_taxid.'</td><td width="180">เลขที่ : '.$invoice_number.'<br>วันที่ออก : '.$issuedate.'<br>อ้างอิงใบกำกับภาษีอย่างย่อ : '.$small_invoice_number.'</td></tr>
+</tbody></table>
+<br/><br/>
+<table border="0">
+<thead>
+	<tr>
+		<th width="25" style="border-top:1px solid black;border-left:1px solid black;border-bottom:1px solid black;text-align:center;">No.</th>
+		<th width="200" style="border-top:1px solid black;border-left:1px solid black;border-bottom:1px solid black;text-align:center;">รายละเอียดสินค้า</th>
+		<th width="40" style="border-top:1px solid black;border-left:1px solid black;border-bottom:1px solid black;text-align:center;">จำนวน</th>
+		<th width="85" style="border-top:1px solid black;border-left:1px solid black;border-bottom:1px solid black;text-align:center;">หน่วยละ</th>
+		<th width="85" style="border-top:1px solid black;border-left:1px solid black;border-bottom:1px solid black;text-align:center;">ส่วนลด</th>
+		<th width="105" style="border-top:1px solid black;border-right:1px solid black;border-left:1px solid black;border-bottom:1px solid black;text-align:center;">จำนวนเงิน</th>
+	</tr>
+</thead><tbody>';
+		// $pdf->writeHTML($html, true, false, true, false, '');
+
+
+		$no = 0;
+		$max_item = 6;
+		$qty = 0;
+    $total_page = ceil(count($item_array)/$max_item);
+    $current_page = 0;
+		foreach ($item_array as $loop) {
+			$no++;
+			if (($no != 1) && ($no % $max_item == 1)) {
+        $current_page++;
+        $html .= '<tr><td width="25" style="text-align:center;border-left:1px solid black;"></td><td width="10" style="border-left:1px solid black;"></td><td width="190">';
+				$html .= '</td><td width="40" style="text-align:center;border-left:1px solid black;"></td>
+				<td width="85" style="text-align:center;border-left:1px solid black;"></td>
+				<td width="85" style="text-align:center;border-left:1px solid black;">';
+				$html .= '</td>
+				<td width="105" style="text-align:right;border-left:1px solid black;border-right:1px solid black;">&nbsp;&nbsp;&nbsp;&nbsp;</td>
+				</tr>';
+        $html .= '<tr><td width="25" style="text-align:center;border-left:1px solid black;"></td><td width="10" style="border-left:1px solid black;"></td><td width="190" style="text-align: center;">หน้า '.$current_page.' / '.$total_page;
+				$html .= '</td><td width="40" style="text-align:center;border-left:1px solid black;"></td>
+				<td width="85" style="text-align:center;border-left:1px solid black;"></td>
+				<td width="85" style="text-align:center;border-left:1px solid black;">';
+				$html .= '</td>
+				<td width="105" style="text-align:right;border-left:1px solid black;border-right:1px solid black;">&nbsp;&nbsp;&nbsp;&nbsp;</td>
+				</tr>';
+        // sum qty & total price no vat
+    		$html .= '<tr><td colspan="3" style="border-top:1px solid black;border-left:1px solid black;border-right:1px solid black;text-align:right;">จำนวน &nbsp;&nbsp;&nbsp;</td>
+    		<td style="border-top:1px solid black;border-left:1px solid black;border-right:1px solid black;text-align:center;"></td>
+    		<td colspan="2" style="border-top:1px solid black;border-left:1px solid black;border-right:1px solid black;text-align:right;">ราคาไม่รวมภาษีมูลค่าเพิ่ม &nbsp;&nbsp;&nbsp;</td>
+    		<td style="border-top:1px solid black;border-left:1px solid black;border-right:1px solid black;text-align:right;">&nbsp;&nbsp;&nbsp;</td>
+    		</tr>';
+    		// vat
+    		$html .= '<tr>
+    		<td colspan="6" style="border-top:1px solid black;border-left:1px solid black;border-right:1px solid black;text-align:right;">จํานวนภาษีมูลค่าเพิ่ม 7 % &nbsp;&nbsp;&nbsp;</td>
+    		<td style="border-top:1px solid black;border-left:1px solid black;border-right:1px solid black;text-align:right;">&nbsp;&nbsp;&nbsp;</td>
+    		</tr>';
+    		// total price vat
+    		$html .= '<tr><td colspan="4" style="border-top:1px solid black;border-left:1px solid black;"></td>
+    		<td colspan="2" style="border-top:1px solid black;border-right:1px solid black;text-align:right;">จํานวนเงินรวมทั้งสิ้น &nbsp;&nbsp;&nbsp;</td>
+    		<td style="border-top:1px solid black;border-left:1px solid black;border-right:1px solid black;text-align:right;">&nbsp;&nbsp;&nbsp;</td>
+    		</tr>';
+
+    		$html .= '<tr><td colspan="7" style="border-top:1px solid black;"></td></tr></tbody></table>';
+
+        $html .= '<table style="border-bottom:1px solid black; border-spacing:0px 0px;">
+        <tbody>
+        <tr style="">
+        <td width="180" align="center" style="border-left:1px solid black; border-top:1px solid black;">ได้รับสินค้าตามรายการถูกต้องแล้ว</td>
+        <td width="180" align="center" style="border-left:1px solid black; border-top:1px solid black;"> </td>
+        <td width="180" align="center" style="border-left:1px solid black; border-top:1px solid black; border-right:1px solid black;"> </td>
+        </tr>
+        <tr>
+        <td height="30" align="center" style="border-left:1px solid black;">&nbsp;</td><td align="center" style="border-left:1px solid black;"> </td>
+        <td align="center" style="border-left:1px solid black; border-right:1px solid black;"> </td>
+        </tr>
+        <tr>
+        <td align="center" style="border-left:1px solid black;">......................................</td><td align="center" style="border-left:1px solid black;">......................................</td>
+        <td align="center" style="border-left:1px solid black; border-right:1px solid black;">......................................</td>
+        </tr>
+        <tr>
+        <td align="center" style="border-left:1px solid black;">วันที่ / Date......................................</td><td align="center" style="border-left:1px solid black;">วันที่ / Date......................................</td>
+        <td align="center" style="border-left:1px solid black; border-right:1px solid black;">วันที่ / Date......................................</td>
+        </tr>
+        <tr>
+        <td align="center" style="border-left:1px solid black; border-top:1px solid black;">ผู้รับของ / Receiver</td><td align="center" style="border-left:1px solid black; border-top:1px solid black;">ผู้ส่งของ / Delivered By</td>
+        <td align="center" style="border-left:1px solid black; border-right:1px solid black; border-top:1px solid black;">ผู้รับเงิน / Collector</td>
+        </tr>
+        <tbody>
+        </table>';
+				$html .= '<br pagebreak="true"/>';
+				$html .= '
+						<html><body><table border="0"><tbody><tr>
+        <td width="300">'.$shop_company.'<br>
+        '.$shop_address1.'<br/>
+        '.$shop_address2.'<br>Tax ID : '.$shop_taxid.' ';
+
+        if ($shop_branch_no == 0) $html .= 'Head Office';
+        else if ($shop_branch_no > 0) $html .= 'Branch No. '.str_pad($shop_branch_no, 5, '0', STR_PAD_LEFT);
+
+        $html .= '<br/>';
+        if ($shop_telephone != "") $html .= "Tel. ".$shop_telephone." ";
+        if ($shop_fax != "") $html .= "Fax. ".$shop_fax;
+
+						$html .= '</td>
+				<td width="230" style="text-align: right;"><b style="font-size: 20pt">ใบกำกับภาษี /<br/>ใบเสร็จรับเงิน</b><br/><b style="font-size: 16pt">สำเนา</b></td></tr>
 				<tr><td></td><td></td></tr>
 
         <tr><td width="350">นามลูกค้า : '.$cus_name.'<br>ที่อยู่ : '.$cus_address.'<br>เลขประจำตัวผู้เสียภาษี : '.$cus_taxid.'</td><td width="180">เลขที่ : '.$invoice_number.'<br>วันที่ออก : '.$issuedate.'<br>อ้างอิงใบกำกับภาษีอย่างย่อ : '.$small_invoice_number.'</td></tr>

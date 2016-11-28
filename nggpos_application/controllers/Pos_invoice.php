@@ -237,7 +237,7 @@ if ($shop_telephone != "") $html .= "Tel. ".$shop_telephone." ";
 if ($shop_fax != "") $html .= "Fax. ".$shop_fax;
 
 		$html .= '</td>
-<td width="230" style="text-align: right;"><b style="font-size: 20pt">ใบกำกับภาษี</b><br><br>สาขา : '.$shop_name.'</td></tr>
+<td width="230" style="text-align: right;"><b style="font-size: 20pt">ใบกำกับภาษี /<br/>ใบเสร็จรับเงิน</b><br/><b style="font-size: 16pt">ต้นฉบับ</b></td></tr>
 <tr><td></td><td></td></tr>
 
 <tr><td width="350">นามลูกค้า : '.$cus_name.'<br>ที่อยู่ : '.$cus_address.'<br>เลขประจำตัวผู้เสียภาษี : '.$cus_taxid.'</td><td width="180">เลขที่ : '.$invoice_number.'<br>วันที่ออก : '.$issuedate.'<br>อ้างอิงใบกำกับภาษีอย่างย่อ : '.$small_invoice_number.'</td></tr>

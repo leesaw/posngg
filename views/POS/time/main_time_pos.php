@@ -35,20 +35,7 @@
   <!-- Content Wrapper. Contains page content -->
   <div class="content-wrapper">
     <!-- Content Header (Page header) -->
-    <section class="content-header">
-      <div class="row">
-        <div class='col-md-2'>
-          <div class="menutext">
-            นาฬิกา > สั่งขาย
-          </div>
-        </div>
-        <div class='col-md-6'></div>
-        <div class='col-md-2'>
-          <a type='button' class='btn bg-purple' id='btnSelectProductType' href='<?php echo site_url('pos_main'); ?>'>เลือกประเภทสินค้า</a>
-        </div>
-        <div class='col-md-2'></div>
-      </div>
-    </section>
+    <?php $this->load->view('includes/content_header'); ?>
 
     <!-- Main content -->
     <section class="content">
@@ -113,12 +100,8 @@
               </div>
               <br/>
               <div class='row'>
-                <div class='col-md-8'>
-                  <div class="form-group">
-                    <label class="col-md-3 control-label" for="paymentRemark">หมายเหตุ </label>
-                    <div class="col-md-9"> <input type="text" class="form-control" id="paymentRemark" name="paymentRemark" value="" /></div>
-                  </div>
-                </div>
+                <!-- <div class="col-md-2"><label class="control-label pull-right" for="paymentRemark">หมายเหตุ </label></div> -->
+                <div class="col-md-8"> <input type="text" class="form-control" id="paymentRemark" name="paymentRemark" value="" placeholder="หมายเหตุ" /></div>
               </div>
             </div>
             <!-- /.box-body -->
@@ -137,7 +120,7 @@
                   <div class='col-md-12'>
                     เลขสมาชิก / เบอร์ติดต่อ
                     <div class="form-group has-feedback">
-                      <input type='text' name='cusTelephone_view' id='cusTelephone_view' class='form-control' value=''>
+                      <input type='text' name='cusTelephone_view' id='cusTelephone_view' class='form-control' value='' autocomplete='off'>
                       <span class="form-control-feedback"><i class="fa fa-search" aria-hidden="true"></i></span>
                     </div>
                   </div>

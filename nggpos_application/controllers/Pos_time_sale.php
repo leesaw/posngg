@@ -23,6 +23,7 @@ class Pos_time_sale extends CI_Controller {
 		$this->load->model('users_model','',TRUE);
 		$data['sale_person'] = $this->users_model->get_users($where);
 
+		$data['content_header'] = "นาฬิกา > สั่งขาย";
 		$data['title'] = programname.version." - Main";
 		$this->load->view('POS/time/main_time_pos', $data);
 	}

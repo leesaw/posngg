@@ -23,6 +23,7 @@ class Pos_main extends CI_Controller {
 		$this->session->set_userdata('sessproducttype', 'time');
 		$this->session->set_userdata('sessproducttypeview', 'นาฬิกา');
 		$data['title'] = programname.version." - Main";
+		$data['content_header'] = "นาฬิกา > สั่งขาย";
 		$this->load->view('POS/time/main_time_pos', $data);
 	}
 

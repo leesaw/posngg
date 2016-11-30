@@ -59,7 +59,7 @@ echo '<tr><td colspan="3"><hr></td></tr>';
 
 $qty = 0;
 foreach ($item_array as $loop) {
-  echo '<tr><td width="110">'.$loop->popi_barcode.'<br/>'.$loop->popi_item_number."-".$loop->popi_item_name;
+  echo '<tr><td width="110">'.$loop->popi_item_number."<br>".$loop->popi_item_name;
     if ($loop->popi_item_serial != "")	echo "<br>Serial : ".$loop->popi_item_serial;
     echo '</td><td width="30" style="text-align:center;" valign="top">'.$loop->popi_item_qty.'</td>
     <td width="80" style="text-align:right;" valign="top">'.number_format($loop->popi_item_net, 2,'.',',').'</td></tr>';
@@ -95,6 +95,7 @@ echo '</tbody></table>';
 <script>
 window.onload = function () {
     window.print();
+    setTimeout(window.close, 0);
 }
 </script>
 </body>

@@ -36,7 +36,7 @@ class Pos_payment extends CI_Controller {
     $number = $this->pos_payment_model->getMaxNumber_small_invoice($month, $shop_check_number);
     $number++;
 
-  	$number = "A".$year_number.$month_number.str_pad($number, 4, '0', STR_PAD_LEFT);
+  	$number = "ABN".str_pad($shop_id, 2, '0', STR_PAD_LEFT)."-".$year_number.$month_number.str_pad($number, 4, '0', STR_PAD_LEFT);
 
 		// insert data into pos_payment and get posp_id to insert pos payment item
     $payment_temp = array(
@@ -126,11 +126,16 @@ class Pos_payment extends CI_Controller {
 	function view_payment()
 	{
 		$payment_id = $this->uri->segment(3);
+		$shop_id = $this->session->userdata('sessshopid');
 		$where = "";
-		$where .= "posp_id = '".$payment_id."'";
+		$where .= "posp_id = '".$payment_id."' and posp_shop_id = '".$shop_id."'";
 
 		$this->load->model('pos_payment_model','',TRUE);
-		$data['payment_array'] = $this->pos_payment_model->get_payment($where);
+		$payment_array = $this->pos_payment_model->get_payment($where);
+
+		if (count($payment_array) < 1) redirect('pos_error', 'refresh');
+
+		$data['payment_array'] = $payment_array;
 
 		$where = "popi_posp_id = '".$payment_id."'";
 		$where .= " and popi_enable = 1";
@@ -149,15 +154,27 @@ class Pos_payment extends CI_Controller {
     }
 		$data['had_payment'] = $had_payment;
 
-		$shop_id = $this->session->userdata('sessshopid');
+
 		$this->load->model('shop_model','',TRUE);
 		$where = "posh_id = '".$shop_id."'";
 		$data['shop_array'] = $this->shop_model->get_shop($where);
 
 		$data['title'] = programname.version." - Payment view";
+		$data['content_header'] = "นาฬิกา > สั่งขาย > รายละเอียดการขาย";
 		$this->load->view('POS/time/main_time_view_payment', $data);
 	}
 
+	function view_today_payment()
+	{
+		$this->load->model('pos_payment_model','',TRUE);
+		$shop_id = $this->session->userdata('sessshopid');
+		$where = "posp_shop_id = '".$shop_id."' and posp_enable = '1' and posp_issuedate = '".date("Y-m-d")."'";
+		$data["payment_array"] = $this->pos_payment_model->get_payment($where);
+
+		$data['title'] = programname.version." - Today Payment";
+		$data['content_header'] = "นาฬิกา > สั่งขาย > การสั่งขายของวันนี้";
+		$this->load->view('POS/time/main_time_today_payment', $data);
+	}
 	function void_payment()
 	{
 		$payment_id = $this->uri->segment(3);
@@ -167,6 +184,21 @@ class Pos_payment extends CI_Controller {
 		$this->pos_payment_model->edit_payment($payment_temp);
 
 		redirect('pos_payment/view_payment/'.$payment_id, 'refresh');
+	}
+
+	function search_payment()
+	{
+		$payment_number = $this->input->post("valuePaymentNumber");
+		$shop_id = $this->session->userdata('sessshopid');
+		$where = "";
+		$where .= "posp_small_invoice_number like '".$payment_number."' and posp_enable = '1' and posp_shop_id = '".$shop_id."'";
+		$this->load->model('pos_payment_model','',TRUE);
+		$payment_array = $this->pos_payment_model->get_payment_id($where);
+		if (count($payment_array) > 0) {
+			foreach($payment_array as $loop) $payment_id = $loop->posp_id;
+			if ($payment_id > 0) redirect('pos_payment/view_payment/'.$payment_id, 'refresh');
+			else redirect('pos_error', 'refresh');
+		}else { redirect('pos_error', 'refresh'); }
 	}
 
 	function get_payment_item()
@@ -230,6 +262,7 @@ class Pos_payment extends CI_Controller {
 			$data['shop_array'] = $shop_array;
 
 			$data['title'] = programname.version." - Convert Invoice";
+			$data['content_header'] = "นาฬิกา > ออกใบกำกับภาษี";
 			$this->load->view('POS/time/main_time_convert_invoice', $data);
 		}else{
 			redirect('pos_payment/view_payment/'.$payment_id, 'refresh');

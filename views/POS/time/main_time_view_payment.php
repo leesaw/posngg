@@ -39,25 +39,16 @@
     foreach($shop_array as $loop) {
       $print_tax = $loop->posh_print_tax;
     }
+
+    $today = date("Y-m-d");
+    $issue_array[0] -= 543;
+    $issue = $issue_array[0]."-".$issue_array[1]."-".$issue_array[2];
   ?>
   <!-- Full Width Column -->
   <!-- Content Wrapper. Contains page content -->
   <div class="content-wrapper">
     <!-- Content Header (Page header) -->
-    <section class="content-header">
-      <div class="row">
-        <div class='col-md-4'>
-          <div class="menutext">
-            นาฬิกา > สั่งขาย > รายละเอียดการขาย
-          </div>
-        </div>
-        <div class='col-md-4'></div>
-        <div class='col-md-2'>
-          <a type='button' class='btn bg-purple' id='btnSelectProductType' href='<?php echo site_url('pos_main'); ?>'>เลือกประเภทสินค้า</a>
-        </div>
-        <div class='col-md-2'></div>
-      </div>
-    </section>
+    <?php $this->load->view('includes/content_header'); ?>
 
     <!-- Main content -->
     <section class="content">
@@ -67,11 +58,11 @@
             <div class="box-header with-border">
               <div class='row'>
                 <div class='col-md-4'>
-                  <?php if ($payment_status == 'N') { ?><a href="<?php echo site_url("pos_payment/print_slip_small_invoice")."/".$payment_id; ?>" target="_blank" type="button" class="btn btn-primary btn-lg" name="btnSmallInvoice" id="btnSmallInvoice">พิมพ์ใบกำกับภาษีอย่างย่อ</a><?php } ?>
+                  <?php if ($payment_status == 'N' && $today == $issue) { ?><a href="<?php echo site_url("pos_payment/print_slip_small_invoice")."/".$payment_id; ?>" target="_blank" type="button" class="btn btn-primary btn-lg" name="btnSmallInvoice" id="btnSmallInvoice">พิมพ์ใบกำกับภาษีอย่างย่อ</a><?php } ?>
                 </div>
                 <div class='col-md-8' style='text-align:right;'>
-                  <?php if ($payment_status == 'N') { ?><a type="button" href='<?php echo site_url('pos_payment/void_payment')."/".$payment_id; ?>' class="btn bg-orange btn-lg" name="btnVoid" id="btnVoid">ยกเลิกการขาย (Void)</a><?php } ?>&nbsp;&nbsp;&nbsp;&nbsp;
-                  <?php if ($print_tax != 0 && $had_payment == 0 && $payment_status == 'N') { ?><a type="button" href='<?php echo site_url('pos_payment/convert_invoice')."/".$payment_id; ?>' class="btn btn-danger btn-lg" name="btnInvoice" id="btnInvoice">เปลี่ยนเป็นใบกำกับภาษี</a><?php } ?>
+                  <?php if ($payment_status == 'N' && $today == $issue) { ?><a type="button" href='<?php echo site_url('pos_payment/void_payment')."/".$payment_id; ?>' class="btn bg-orange btn-lg" name="btnVoid" id="btnVoid">ยกเลิกการขาย (Void)</a><?php } ?>&nbsp;&nbsp;&nbsp;&nbsp;
+                  <?php if ($print_tax != 0 && $had_payment == 0 && $payment_status == 'N' && $today == $issue) { ?><a type="button" href='<?php echo site_url('pos_payment/convert_invoice')."/".$payment_id; ?>' class="btn btn-danger btn-lg" name="btnInvoice" id="btnInvoice">เปลี่ยนเป็นใบกำกับภาษี</a><?php } ?>
                 </div>
               </div>
             </div>

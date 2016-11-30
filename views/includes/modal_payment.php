@@ -19,15 +19,17 @@
           </div>
           <div class="form-group">
 						<label class="col-md-4 control-label" for="paymentValue">จำนวนเงินที่ชำระ <font class='text-red'>*</font></label>
-						<div class="col-md-8"> <input type="text" class="form-control input-lg number" id="paymentValue" name="paymentValue" value="" placeholder="0.00" /></div>
+						<div class="col-md-8"> <input type="text" class="form-control input-lg number" id="paymentValue" name="paymentValue" value="" placeholder="0.00" autofocus autocomplete="off"/></div>
           </div>
 
           </div>            <!-- /modal-body -->
         </div>
       </div>
-          <div class="modal-footer">
-              <button type="button" class="btn btn-success" name="btnConfirmPayment" id="btnConfirmPayment"><i class='fa fa-save'></i> บันทึก</button>
-
+      <hr>
+          <div class="row">
+            <div class="col-md-12">
+              <button type="button" class="btn btn-success pull-right" name="btnConfirmPayment" id="btnConfirmPayment"><i class='fa fa-save'></i> บันทึก</button>
+            </div>
           </div>
         </div>
 

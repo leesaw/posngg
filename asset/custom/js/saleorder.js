@@ -104,6 +104,34 @@ function RemoveRougeChar(convertString){
       }
     });
 
+    $('#paymentValue').keyup(function(e){ //enter next
+      if(e.keyCode == 13) {
+        if ($("#paymentValue").val()=="") {
+          alert("กรุณาใส่ จำนวนเงินที่ชำระ !");
+          $("#paymentValue").focus();
+        }else{
+          $("#btnConfirmPayment").prop('disabled', true);
+          var paymentway = $("#paymentWay").val();
+          var paymentvalue = ($("#paymentValue").val()).replace(/,/g, '');
+
+          var element = '<tr id="row_payment'+payment_enter+'"><td><button type="button" id="row'+payment_enter+'" class="btn btn-danger btn-xs" onClick="delete_payment_row('+payment_enter+');"><i class="fa fa-close"></i></button></td>'
+          +'<td><input type="hidden" name="payment_gateway" value="'+paymentway+'">'+paymentway+'</td><td><input type="hidden" name="payment_value" value="'+paymentvalue+'">'+parseFloat(paymentvalue).toFixed(2).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + " บาท"+'</td>'+'</tr>';
+          $('#payment_list > tbody').append(element);
+          payment_enter++;
+          payment_list++;
+
+          $("#btnConfirmPayment").prop('disabled', false);
+          $("#paymentValue").val('');
+          $('#modPayment').modal('toggle');
+
+          setTimeout(function(){
+                    calculate();
+                },300);
+        }
+      }
+
+		});
+
     $('#modAllPercent').on('shown.bs.modal', function() {
       $(this).find('[autofocus]').focus();
     });
@@ -113,6 +141,14 @@ function RemoveRougeChar(convertString){
     });
 
     $('#modNewCustomer').on('shown.bs.modal', function() {
+      $(this).find('[autofocus]').focus();
+    });
+
+    $('#modPayment').on('shown.bs.modal', function() {
+      $(this).find('[autofocus]').focus();
+    });
+
+    $('#modSearchPayment').on('shown.bs.modal', function() {
       $(this).find('[autofocus]').focus();
     });
 

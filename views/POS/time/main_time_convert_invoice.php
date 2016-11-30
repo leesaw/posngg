@@ -56,20 +56,7 @@
   <!-- Content Wrapper. Contains page content -->
   <div class="content-wrapper">
     <!-- Content Header (Page header) -->
-    <section class="content-header">
-      <div class="row">
-        <div class='col-md-4'>
-          <div class="menutext">
-            นาฬิกา > ออกใบกำกับภาษี
-          </div>
-        </div>
-        <div class='col-md-4'></div>
-        <div class='col-md-2'>
-          <a type='button' class='btn bg-purple' id='btnSelectProductType' href='<?php echo site_url('pos_main'); ?>'>เลือกประเภทสินค้า</a>
-        </div>
-        <div class='col-md-2'></div>
-      </div>
-    </section>
+    <?php $this->load->view('includes/content_header'); ?>
 
     <!-- Main content -->
     <section class="content">

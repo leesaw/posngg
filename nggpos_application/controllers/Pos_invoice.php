@@ -81,7 +81,7 @@ class Pos_invoice extends CI_Controller {
       $number = $this->pos_invoice_model->getMaxNumber_invoice($month, $shop_check_number);
       $number++;
 
-    	$number = "IVN-".$shop_branch_no."-".$year_number.$month_number.str_pad($number, 4, '0', STR_PAD_LEFT);
+    	$number = "IVN-".str_pad($shop_id, 2, '0', STR_PAD_LEFT)."-".$shop_branch_no."-".$year_number.$month_number.str_pad($number, 4, '0', STR_PAD_LEFT);
 
   		// insert data into pos_payment and get posp_id to insert pos payment item
       $invoice_temp = array(
@@ -168,6 +168,7 @@ class Pos_invoice extends CI_Controller {
 		$data['item_array'] = $this->pos_invoice_model->get_time_item_invoice($where);
 
 		$data['title'] = programname.version." - Invoice view";
+		$data['content_header'] = "นาฬิกา > ใบกำกับภาษี";
 		$this->load->view('POS/time/main_time_view_invoice', $data);
   }
 

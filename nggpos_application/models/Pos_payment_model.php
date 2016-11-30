@@ -25,6 +25,22 @@ Class Pos_payment_model extends CI_Model
     return $this->db->get()->result();
   }
 
+  function get_last_payment_id($where)
+  {
+    $this->db->select('MAX(posp_id) as last_posp_id');
+    $this->db->from('pos_payment');
+    if ($where != "") $this->db->where($where);
+    return $this->db->get()->result();
+  }
+
+  function get_payment_id($where)
+  {
+    $this->db->select('posp_id');
+    $this->db->from('pos_payment');
+    if ($where != "") $this->db->where($where);
+    return $this->db->get()->result();
+  }
+
   function get_time_item_payment($where)
   {
     $this->db->select('popi_id, popi_posp_id, popi_barcode, popi_item_id, popi_item_name, popi_item_number, popi_item_uom, popi_item_brand, popi_item_description,

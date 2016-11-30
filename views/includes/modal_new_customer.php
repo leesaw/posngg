@@ -11,15 +11,15 @@
         <div class="row"><div class="col-md-12"><form class="form-horizontal">
 					<div class="form-group">
 						<label class="col-md-4 control-label" for="cusTelephone">เบอร์ติดต่อ <font class='text-red'>*</font></label>
-						<div class="col-md-8"> <input type="text" class="form-control" id="cusTelephone" name="cusTelephone" value="" placeholder="ตัวอย่าง 0812345678" autofocus/></div>
+						<div class="col-md-8"> <input type="text" class="form-control" id="cusTelephone" name="cusTelephone" value="" placeholder="ตัวอย่าง 0812345678" autofocus autocomplete='off'/></div>
           </div>
           <div class="form-group">
 						<label class="col-md-4 control-label" for="cusName">ชื่อ-นามสกุล <font class='text-red'>*</font></label>
-						<div class="col-md-8"> <input type="text" class="form-control" id="cusName" name="cusName" value="" /></div>
+						<div class="col-md-8"> <input type="text" class="form-control" id="cusName" name="cusName" value="" autocomplete='off' /></div>
           </div>
           <div class="form-group">
 						<label class="col-md-4 control-label" for="cusAddress">ที่อยู่</label>
-						<div class="col-md-8"> <input type="text" class="form-control" id="cusAddress" name="cusAddress" value="" /></div>
+						<div class="col-md-8"> <input type="text" class="form-control" id="cusAddress" name="cusAddress" value="" autocomplete='off' /></div>
           </div>
           <div class="form-group">
 						<label class="col-md-4 control-label" for="cusProvince">จังหวัด</label>
@@ -32,7 +32,7 @@
           </div>
           <div class="form-group">
 						<label class="col-md-4 control-label" for="cusTaxID">เลขที่ผู้เสียภาษี / Passport</label>
-						<div class="col-md-8"> <input type="text" class="form-control" id="cusTaxID" name="cusTaxID" value="" placeholder="0-0000-00000-00-0" /></div>
+						<div class="col-md-8"> <input type="text" class="form-control" id="cusTaxID" name="cusTaxID" value="" placeholder="0-0000-00000-00-0" autocomplete='off' /></div>
           </div>
 
           </div>            <!-- /modal-body -->

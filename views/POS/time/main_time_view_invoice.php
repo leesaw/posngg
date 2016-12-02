@@ -47,6 +47,10 @@
       $shop_branch_no = $loop->pinv_shop_branch_no;
     }
 
+    $today = date("Y-m-d");
+    $issue_array[0] -= 543;
+    $issue = $issue_array[0]."-".$issue_array[1]."-".$issue_array[2];
+
   ?>
   <!-- Full Width Column -->
   <!-- Content Wrapper. Contains page content -->
@@ -149,7 +153,9 @@
         <div class='col-md-2'>
 
             <?php if ($inv_status == 'N') { ?><a href="<?php echo site_url("pos_invoice/print_invoice")."/".$inv_id; ?>" target="_blank" type="button" class="btn btn-primary btn-lg btn-block" name="btnInvoice" id="btnInvoice">พิมพ์ใบกำกับภาษี</a><?php } ?>
-          <br/><br/>
+
+          <br/><br/><br/><br/>
+          <?php if ($inv_status == 'N' && $today == $issue) { ?><a type="button" href='<?php echo site_url('pos_invoice/void_invoice')."/".$inv_id; ?>' class="btn btn-danger btn-lg btn-block" name="btnVoid" id="btnVoid"><i class="fa fa-ban"></i> ยกเลิก (Void)<br>ใบกำกับภาษี</a><?php } ?>
         </div>
       </div>
       <!-- /.row -->

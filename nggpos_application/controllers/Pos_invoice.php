@@ -81,7 +81,7 @@ class Pos_invoice extends CI_Controller {
       $number = $this->pos_invoice_model->getMaxNumber_invoice($month, $shop_check_number);
       $number++;
 
-    	$number = "IVN-".str_pad($shop_id, 2, '0', STR_PAD_LEFT)."-".$shop_branch_no."-".$year_number.$month_number.str_pad($number, 4, '0', STR_PAD_LEFT);
+    	$number = "IVN".str_pad($shop_id, 2, '0', STR_PAD_LEFT)."-".$shop_branch_no."-".$year_number.$month_number.str_pad($number, 4, '0', STR_PAD_LEFT);
 
   		// insert data into pos_payment and get posp_id to insert pos payment item
       $invoice_temp = array(
@@ -115,6 +115,11 @@ class Pos_invoice extends CI_Controller {
           "pinv_shop_branch_no" => $shop_branch_no,
   		);
   		$pinv_id = $this->pos_invoice_model->insert_new_invoice($invoice_temp);
+			// insert log new payment
+			$temp = array('pinv_id' => $posp_id, "pinv_updatedate" => $datetime_now, "pinv_update_by" => $user_id);
+			$invoice_temp = array_merge($invoice_temp, $temp);
+			$log_id = $this->pos_payment_model->insert_log_new_invoice($invoice_temp);
+
       if ($pinv_id > 0) {
         $result_item = true;
     		$where = "popi_posp_id = '".$payment_id."'";
@@ -171,6 +176,70 @@ class Pos_invoice extends CI_Controller {
 		$data['content_header'] = "นาฬิกา > ใบกำกับภาษี";
 		$this->load->view('POS/time/main_time_view_invoice', $data);
   }
+
+	function view_invoice_abb_id()
+	{
+		$payment_id = $this->uri->segment(3);
+		$where = "pinv_payment_id = '".$payment_id."'";
+		$this->load->model('pos_invoice_model','',TRUE);
+		$invoice_array = $this->pos_invoice_model->get_invoice($where);
+		foreach($invoice_array as $loop) {
+			$inv_id = $loop->pinv_id;
+		}
+		redirect('pos_invoice/view_invoice/'.$inv_id, 'refresh');
+	}
+
+	function void_invoice()
+	{
+		$invoice_id = $this->uri->segment(3);
+		$invoice_temp = array("id" => $invoice_id, "pinv_status" => 'V', "pinv_enable" => 0, "pinv_updatedate" => $datetime_now, "pinv_update_by" => $user_id);
+
+		$this->load->model('pos_invoice_model','',TRUE);
+		$this->pos_invoice_model->edit_invoice($invoice_temp);
+
+		$where = "pinv_id = '".$invoice_id."'";
+		$result = $this->pos_invoice_model->get_invoice($where);
+		$datetime_now = date("Y-m-d H:i:s");
+    $user_id = $this->session->userdata('sessid');
+		foreach($result as $loop) {
+			$temp = array(
+				"pinv_id" => $invoice_id,
+				"pinv_updatedate" => $datetime_now,
+				"pinv_update_by" => $user_id,
+				"pinv_issuedate" => $loop->pinv_issuedate,
+				"pinv_price_net" => $loop->pinv_price_net,
+				"pinv_price_discount" => $loop->pinv_price_discount,
+				"pinv_price_topup" => $loop->pinv_price_topup,
+				"pinv_price_tax" => $loop->pinv_price_tax,
+				"pinv_customer_id" => $loop->pinv_customer_id,
+				"pinv_saleperson_id" => $loop->pinv_saleperson_id,
+				"pinv_invoice_number" => $loop->pinv_invoice_number,
+				"pinv_small_invoice_number" => $loop->pinv_small_invoice_number,
+				"pinv_status" => 'V',
+				"pinv_remark" => $loop->pinv_remark,
+				"pinv_dateadd" => $loop->pinv_dateadd,
+				"pinv_dateadd_by" => $loop->pinv_dateadd_by,
+				"pinv_shop_id" => $loop->pinv_shop_id,
+				"pinv_shop_name" => $loop->pinv_shop_name,
+				"pinv_customer_name" => $loop->pinv_customer_name,
+				"pinv_customer_address" => $loop->pinv_customer_address,
+				"pinv_customer_taxid" => $loop->pinv_customer_taxid,
+				"pinv_customer_telephone" => $loop->pinv_customer_telephone,
+				"pinv_payment_id" => $loop->pinv_payment_id,
+				"pinv_shop_company" => $loop->pinv_shop_company,
+				"pinv_shop_address1" => $loop->pinv_shop_address1,
+				"pinv_shop_address2" => $loop->pinv_shop_address2,
+				"pinv_shop_telephone" => $loop->pinv_shop_telephone,
+				"pinv_shop_fax" => $loop->pinv_shop_fax,
+				"pinv_shop_taxid" => $loop->pinv_shop_taxid,
+				"pinv_shop_branch_no" => $loop->pinv_shop_branch_no,
+				"pinv_enable" => 0,
+			);
+		}
+		$log_id = $this->pos_invoice_model->insert_log_new_invoice($temp);
+
+		redirect('pos_invoice/view_invoice/'.$invoice_id, 'refresh');
+	}
 
 	function print_invoice()
 	{

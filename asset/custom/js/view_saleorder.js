@@ -10,13 +10,21 @@ $(document).ready(function() {
   });
 
   $("#btnVoid").click(function() {
-    var message = "ต้องการยกเลิกการขายนี้ ใช่หรือไม่ !";
-    return confirm(message);
+      bootbox.confirm("ต้องการยกเลิกการสั่งขาย ที่เลือกไว้ใช่หรือไม่ ?", function(result) {
+        var currentForm = this;
+        if (result) {
+            bootbox.prompt("เนื่องจาก..", function(result) {
+              if (result === null) {
+                document.getElementById("frmVoid").submit();
+              } else {
+                document.getElementById("remarkvoid").value=result;
+                document.getElementById("frmVoid").submit();
+              }
+            });
+        }
+
+      });
   });
 
-  $("#btnInvoice").click(function() {
-    var message = "ต้องการเปลี่ยนเป็นใบกำกับภาษี ใช่หรือไม่ !";
-    return confirm(message);
-  });
 
 });

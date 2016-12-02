@@ -34,6 +34,7 @@
 			$issue_array = explode('-', $issuedate);
 			$issue_array[0] += 543;
 			$issuedate = $issue_array[2]."/".$issue_array[1]."/".$issue_array[0];
+      $remark = $loop->posp_remark;
     }
 
     foreach($shop_array as $loop) {
@@ -58,11 +59,12 @@
             <div class="box-header with-border">
               <div class='row'>
                 <div class='col-md-4'>
-                  <?php if ($payment_status == 'N' && $today == $issue) { ?><a href="<?php echo site_url("pos_payment/print_slip_small_invoice")."/".$payment_id; ?>" target="_blank" type="button" class="btn btn-primary btn-lg" name="btnSmallInvoice" id="btnSmallInvoice">พิมพ์ใบกำกับภาษีอย่างย่อ</a><?php } ?>
+                  <?php if ($payment_status == 'N') { ?><a href="<?php echo site_url("pos_payment/print_slip_small_invoice")."/".$payment_id; ?>" target="_blank" type="button" class="btn btn-primary btn-lg" name="btnSmallInvoice" id="btnSmallInvoice"><i class="fa fa-print"></i> พิมพ์ใบกำกับภาษีอย่างย่อ</a><?php } ?>
                 </div>
                 <div class='col-md-8' style='text-align:right;'>
-                  <?php if ($payment_status == 'N' && $today == $issue) { ?><a type="button" href='<?php echo site_url('pos_payment/void_payment')."/".$payment_id; ?>' class="btn bg-orange btn-lg" name="btnVoid" id="btnVoid">ยกเลิกการขาย (Void)</a><?php } ?>&nbsp;&nbsp;&nbsp;&nbsp;
-                  <?php if ($print_tax != 0 && $had_payment == 0 && $payment_status == 'N' && $today == $issue) { ?><a type="button" href='<?php echo site_url('pos_payment/convert_invoice')."/".$payment_id; ?>' class="btn btn-danger btn-lg" name="btnInvoice" id="btnInvoice">เปลี่ยนเป็นใบกำกับภาษี</a><?php } ?>
+                  <form action="<?php echo site_url('pos_payment/void_payment')."/".$payment_id; ?>" method="post" name="frmVoid" id ="frmVoid"><input type="hidden" name="remarkvoid" id="remarkvoid" value=""></form>
+                  <?php if ($payment_status == 'N' && $today == $issue) { ?><a type="button" class="btn bg-orange btn-lg" name="btnVoid" id="btnVoid"><i class="fa fa-ban"></i> ยกเลิกการขาย (Void)</a><?php } ?>&nbsp;&nbsp;&nbsp;&nbsp;
+                  <?php if ($print_tax != 0 && $had_payment == 0 && $payment_status == 'N' && $today == $issue) { ?><a type="button" href='<?php echo site_url('pos_payment/convert_invoice')."/".$payment_id; ?>' class="btn btn-danger btn-lg" name="btnInvoice" id="btnInvoice"><i class="fa fa-file-text-o"></i> เปลี่ยนเป็นใบกำกับภาษี</a><?php } ?>
                 </div>
               </div>
             </div>
@@ -77,7 +79,7 @@
                 <div class='col-md-4'>
                   <label>สถานะ : </label> <?php if ($payment_status == 'N') echo "<label class='text-green'>ปิดการขาย</label>";
                   else if ($payment_status == 'V') echo "<label class='text-red'>ยกเลิกแล้ว</label>";
-                  else if ($payment_status == 'T') echo "<label class='text-orange'>เปลี่ยนเป็นใบกำกับภาษีแบบเต็มแล้ว</label>"; ?>
+                  else if ($payment_status == 'T') echo "<label class='text-orange'>เปลี่ยนเป็นใบกำกับภาษีแบบเต็มแล้ว</label><br><a href='".site_url("pos_invoice/view_invoice_abb_id")."/".$payment_id."' type='button' class='btn btn-success btn-sm'>ดูใบกำกับภาษี</a>"; ?>
                 </div>
               </div>
               <br/>
@@ -123,6 +125,12 @@
                       <tr><td colspan="4"></td><td colspan="2" style="text-align:right;">จํานวนเงินรวมทั้งสิ้น</td><td style="text-align:right;"><?php echo number_format($total_net-$total_topup, 2,'.',','); ?></td></tr>
                     </tfoot>
                   </table>
+                </div>
+              </div>
+              <div class='row'>
+                <div class="col-md-10">
+                  <label class="control-label" for="paymentRemark">หมายเหตุ </label>
+                  <input type="text" class="form-control" id="paymentRemark" name="paymentRemark" value="<?php echo $remark; ?>" readonly/>
                 </div>
               </div>
 

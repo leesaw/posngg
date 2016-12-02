@@ -92,6 +92,12 @@ Class Pos_payment_model extends CI_Model
     return $this->db->insert_id();
   }
 
+  function insert_log_new_payment($payment)
+  {
+    $this->db->insert('log_pos_payment', $payment);
+	  return $this->db->insert_id();
+  }
+
   function edit_payment($edit)
   {
     $this->db->where('posp_id', $edit['id']);

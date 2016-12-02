@@ -2586,10 +2586,16 @@ output {
   background-color: transparent;
   border: 0;
 }
+
 .form-control[disabled],
-.form-control[readonly],
 fieldset[disabled] .form-control {
   background-color: #eee;
+  opacity: 1;
+}
+
+.form-control[readonly],
+.form-control {
+  background-color: #ffffff;
   opacity: 1;
 }
 .form-control[disabled],

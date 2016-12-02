@@ -47,6 +47,12 @@ Class Pos_invoice_model extends CI_Model
 	  return $this->db->insert_id();
   }
 
+  function insert_log_new_invoice($payment)
+  {
+    $this->db->insert('log_pos_invoice', $payment);
+	  return $this->db->insert_id();
+  }
+
   function insert_new_invoice_item($item)
   {
     $this->db->insert('pos_invoice_item', $item);

@@ -15,35 +15,6 @@
 <body class="hold-transition skin-red layout-top-nav">
 <div class="wrapper">
   <?php $this->load->view('includes/menu_head_top'); ?>
-
-  <?php
-    foreach($payment_array as $loop) {
-      $payment_id = $loop->posp_id;
-      $total_net = $loop->posp_price_net;
-      $total_topup = $loop->posp_price_topup;
-      $total_tax = $loop->posp_price_tax;
-      $payment_status = $loop->posp_status;
-      $cus_name = $loop->posc_name;
-      $cus_address = $loop->posc_address;
-      $cus_taxid = $loop->posc_taxid;
-      $cus_telephone = $loop->posc_telephone;
-      $saleperson_number = $loop->nggu_number;
-      $saleperson_name = $loop->nggu_firstname." ".$loop->nggu_lastname;
-			$small_invoice_number = $loop->posp_small_invoice_number;
-			$issuedate = $loop->posp_issuedate;
-			$issue_array = explode('-', $issuedate);
-			$issue_array[0] += 543;
-			$issuedate = $issue_array[2]."/".$issue_array[1]."/".$issue_array[0];
-    }
-
-    foreach($shop_array as $loop) {
-      $print_tax = $loop->posh_print_tax;
-    }
-
-    $today = date("Y-m-d");
-    $issue_array[0] -= 543;
-    $issue = $issue_array[0]."-".$issue_array[1]."-".$issue_array[2];
-  ?>
   <!-- Full Width Column -->
   <!-- Content Wrapper. Contains page content -->
   <div class="content-wrapper">
@@ -54,9 +25,9 @@
     <section class="content">
       <div class="row">
         <div class="col-md-12">
-          <div class="box box-success">
+          <div class="box box-primary">
             <div class="box-header with-border">
-              <label>ใบกำกับภาษีอย่างย่อ</label>
+              <label>การสั่งขายของวันนี้</label>
             </div>
             <div class="box-body">
               <div class='row'>
@@ -76,32 +47,25 @@
 
                     </thead>
                     <tbody>
-                      <?php $sum_qty = 0; foreach($payment_array as $loop) { ?>
+                      <?php $no = 0; foreach($payment_array as $loop) { ?>
                       <tr>
-                        <td><a type="button" class="btn btn-xs btn-primary" id="btnView" href="<?php echo site_url("pos_payment/view_today_payment"); ?>"><i class="fa fa-search"></i></a></td>
-                        <td><?php echo $loop->popi_item_number."-".$loop->popi_item_name."<br>".$loop->popi_item_brand."<br>".$loop->popi_item_description; ?>
-                        <?php  if ($loop->popi_item_serial != "")	echo "<br>Serial : ".$loop->popi_item_serial; ?>
-                        </td>
-                        <td class="center-text"><?php echo number_format($loop->popi_item_srp, 2,'.',','); ?></td>
-                        <td class="center-text"><?php echo $loop->popi_item_qty." ".$loop->popi_item_uom; ?></td>
-                        <td class="center-text"><?php echo number_format($loop->popi_item_dc_baht, 2,'.',','); ?></td>
-                        <td class="center-text"><?php echo number_format($loop->popi_item_dc_percent); ?></td>
-                        <td style="text-align:right;"><?php echo number_format($loop->popi_item_net, 2,'.',','); ?></td>
+                        <td><a type="button" class="btn btn-xs btn-primary" id="btnView" href="<?php echo site_url("pos_payment/view_payment")."/".$loop->posp_id; ?>"><i class="fa fa-search"></i></a></td>
+                        <td><?php echo $loop->posp_small_invoice_number; ?></td>
+                        <td><?php echo $loop->posp_issuedate; ?></td>
+                        <td><?php echo $loop->posp_shop_name; ?></td>
+                        <td><?php echo $loop->nggu_firstname; ?></td>
+                        <td><?php echo $loop->posc_name; ?></td>
+                        <td><?php echo $loop->posp_price_discount; ?></td>
+                        <td><?php echo $loop->posp_price_topup; ?></td>
+                        <td><?php echo $loop->posp_price_tax; ?></td>
+                        <td><?php echo $loop->posp_price_net; ?></td>
                       </tr>
-                      <?php $sum_qty += $loop->popi_item_qty; } ?>
-                      <?php if($total_topup > 0) { ?>
-                      <tr><td></td><td>ส่วนลดท้ายบิล</td><td colspan="4"></td><td style="text-align:right;"><?php echo "- ".number_format($total_topup, 2,'.',','); ?></td></tr>
+                      <?php $no++; } ?>
+                      <?php if ($no==0) { ?>
+                        <tr><td colspan="10" style="text-align: center;">ไม่พบข้อมูล</td></tr>
                       <?php } ?>
                     </tbody>
                     <tfoot>
-                      <tr>
-                        <td colspan="3" style="text-align:right;">จำนวน</td>
-                        <td class="center-text"><?php echo $sum_qty; ?></td>
-                        <td colspan="2" style="text-align:right;">ราคาไม่รวมภาษีมูลค่าเพิ่ม</td>
-                        <td style="text-align:right;"><?php echo number_format($total_net-$total_topup-$total_tax, 2,'.',','); ?></td>
-                      </tr>
-                      <tr><td colspan="4"></td><td colspan="2" style="text-align:right;">จํานวนภาษีมูลค่าเพิ่ม 7 %</td><td style="text-align:right;"><?php echo number_format($total_tax, 2,'.',','); ?></td></tr>
-                      <tr><td colspan="4"></td><td colspan="2" style="text-align:right;">จํานวนเงินรวมทั้งสิ้น</td><td style="text-align:right;"><?php echo number_format($total_net-$total_topup, 2,'.',','); ?></td></tr>
                     </tfoot>
                   </table>
                 </div>

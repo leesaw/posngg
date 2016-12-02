@@ -57,6 +57,11 @@ class Pos_payment extends CI_Controller {
 				"posp_enable" => 1,
 		);
 		$posp_id = $this->pos_payment_model->insert_new_payment($payment_temp);
+		// insert log new payment
+		$temp = array('posp_id' => $posp_id, "posp_updatedate" => $datetime_now, "posp_update_by" => $user_id);
+
+    $payment_temp = array_merge($payment_temp, $temp);
+		$log_id = $this->pos_payment_model->insert_log_new_payment($payment_temp);
 		//------------------------------------------------------
 		// insert pos payment item
 		if ($posp_id > 0) {
@@ -175,13 +180,56 @@ class Pos_payment extends CI_Controller {
 		$data['content_header'] = "นาฬิกา > สั่งขาย > การสั่งขายของวันนี้";
 		$this->load->view('POS/time/main_time_today_payment', $data);
 	}
+
 	function void_payment()
 	{
 		$payment_id = $this->uri->segment(3);
-		$payment_temp = array("id" => $payment_id, "posp_status" => 'V', "posp_enable" => 0);
+		$remark = $this->input->post("remarkvoid");
 
+		$where = "posp_id = '".$payment_id."'";
 		$this->load->model('pos_payment_model','',TRUE);
+		$result = $this->pos_payment_model->get_payment($where);
+		$datetime_now = date("Y-m-d H:i:s");
+		$user_id = $this->session->userdata('sessid');
+
+		$payment_temp = array(
+			"id" => $payment_id,
+			"posp_status" => 'V',
+			"posp_enable" => 0,
+			"posp_updatedate" => $datetime_now,
+			"posp_update_by" => $user_id,
+			"posp_remark" => $remark,
+		);
+
 		$this->pos_payment_model->edit_payment($payment_temp);
+
+		foreach($result as $loop) {
+			$temp = array(
+				"posp_id" => $payment_id,
+				"posp_updatedate" => $datetime_now,
+				"posp_update_by" => $user_id,
+				"posp_issuedate" => $loop->posp_issuedate,
+				"posp_small_invoice_number" => $loop->posp_small_invoice_number,
+				"posp_price_net" => $loop->posp_price_net,
+				"posp_price_discount" => $loop->posp_price_discount,
+				"posp_price_topup" => $loop->posp_price_topup,
+				"posp_price_tax" => $loop->posp_price_tax,
+				"posp_customer_id" => $loop->posp_customer_id,
+				"posp_saleperson_id" => $loop->posp_saleperson_id,
+				"posp_status" => 'V',
+				"posp_remark" => $remark,
+				"posp_dateadd" => $loop->posp_dateadd,
+				"posp_dateadd_by" => $loop->posp_dateadd_by,
+				"posp_shop_id" => $loop->posp_shop_id,
+				"posp_shop_name" => $loop->posp_shop_name,
+				"posp_enable" => 0,
+			);
+		}
+		$log_id = $this->pos_payment_model->insert_log_new_payment($temp);
+
+		// ----
+		// Return to stock
+		// ----
 
 		redirect('pos_payment/view_payment/'.$payment_id, 'refresh');
 	}

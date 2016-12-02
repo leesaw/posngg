@@ -11,6 +11,8 @@
 <script src="<?php echo base_url(); ?>asset/plugins/slimScroll/jquery.slimscroll.min.js"></script>
 <!-- iCheck -->
 <script src="<?php echo base_url(); ?>asset/plugins/iCheck/icheck.min.js"></script>
+<!-- Bootbox -->
+<script src="<?php echo base_url(); ?>asset/plugins/bootbox/bootbox.min.js"></script>
 <!-- Show Datetime -->
 <script src="<?php echo base_url(); ?>asset/plugins/showdatetime/showdatetime.min.js"></script>
 

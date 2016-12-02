@@ -4,10 +4,10 @@ $(document).ready(function() {
     return confirm(message);
   });
 
-  $("#btnSelectProductType").click(function() {
-    var message = "ต้องการให้ข้อมูลทั้งหมดในหน้านี้ ถูกลบใช่หรือไม่ !";
-    return confirm(message);
-  });
+  // $("#btnSelectProductType").click(function() {
+  //   var message = "ต้องการให้ข้อมูลทั้งหมดในหน้านี้ ถูกลบใช่หรือไม่ !";
+  //   return confirm(message);
+  // });
 
   $("#btnVoid").click(function() {
       bootbox.confirm("ต้องการยกเลิกการสั่งขาย ที่เลือกไว้ใช่หรือไม่ ?", function(result) {

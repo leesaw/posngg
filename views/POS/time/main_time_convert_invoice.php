@@ -27,8 +27,10 @@
       $cus_name = $loop->posc_name;
       $cus_address = $loop->posc_address;
       $cus_province = $loop->posc_province;
+
       if ($cus_province == "กรุงเทพมหานคร") $cus_address .= " ".$cus_province;
-      else $cus_address .= " จ.".$cus_province;
+      elseif ($cus_province != "") $cus_address .= " จ.".$cus_province;
+
       $cus_taxid = $loop->posc_taxid;
       $cus_telephone = $loop->posc_telephone;
       $saleperson_number = $loop->nggu_number;

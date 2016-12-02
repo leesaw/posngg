@@ -32,7 +32,7 @@ $(document).ready(function() {
         var shop_branch_no = $("#shop_branch_no").val();
         var shop_telephone = $("#shop_telephone").val();
         var shop_fax = $("#shop_fax").val();
-        
+
         $.ajax({
           type : "POST" ,
           url : link_save_invoice ,
@@ -73,6 +73,11 @@ $(document).ready(function() {
             check_customer(telephone);
           }
       }
+  });
+
+  $("#btnSelectProductType").click(function() {
+    var message = "ต้องการให้ข้อมูลทั้งหมดในหน้านี้ ถูกลบใช่หรือไม่ !";
+    return confirm(message);
   });
 
 });

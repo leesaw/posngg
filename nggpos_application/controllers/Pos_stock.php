@@ -41,7 +41,7 @@ class Pos_stock extends CI_Controller {
 
     $this->load->library('Datatable');
     $this->datatable
-    ->select("it_refcode, br_name, CONCAT(it_model,'<br>',it_short_description) as description, it_srp, stob_qty, serialnumber")
+    ->select("it_refcode, br_name, CONCAT(it_model,'<br>',it_short_description) as description, it_srp, stob_qty, REPLACE(serialnumber, ',', '<br>') as serial")
     ->from('tp_stock_balance')
     ->join('tp_warehouse', 'wh_id = stob_warehouse_id','left')
     ->join('tp_item', 'it_id = stob_item_id','left')

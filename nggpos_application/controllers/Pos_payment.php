@@ -19,6 +19,7 @@ class Pos_payment extends CI_Controller {
     $item = $this->input->post("item");
 		$payment = $this->input->post("payment");
 		$paid = $this->input->post("paid");
+		$serial = $this->input->post("serial");
 
     $date_today = date("Y-m-d");
     $datetime_now = date("Y-m-d H:i:s");
@@ -80,17 +81,18 @@ class Pos_payment extends CI_Controller {
 
 			for($i=0; $i<count($item); $i++) {
 				// get item details
-				$where_item = "tiit_id = '".$item[$i]['id']."'";
+				$where_item = "it_id = '".$item[$i]['id']."'";
 				$this->load->model('item_model','',TRUE);
-				$item_array = $this->item_model->get_time_item($where_item);
+				$item_array = $this->item_model->getItem($where_item);
 				foreach($item_array as $loop) {
-					$item_name = $loop->tiit_name;
-					$item_number = $loop->tiit_number;
-					$item_brand = $loop->tiit_brand;
-					$item_description = $loop->tiit_description;
-					$item_uom = $loop->tiit_uom;
-					$item_serial = $loop->tiit_serial;
+					$item_name = $loop->br_name." ".$loop->it_model;
+					$item_number = $loop->it_refcode;
+					$item_brand = $loop->br_name;
+					$item_description = $loop->it_short_description;
+					$item_uom = $loop->it_uom;
 				}
+				if ($serial == 1 && $item[$i]['serial_id'] > 0) $item_serial = $item[$i]['barcode'];
+				else $item_serial = "";
 
 				$item_temp = array(
 						"popi_posp_id" => $posp_id,
@@ -112,6 +114,37 @@ class Pos_payment extends CI_Controller {
 				$this->load->model('pos_payment_model','',TRUE);
 				$result_id = $this->pos_payment_model->insert_new_payment_item($item_temp);
 				if ($result_id < 0) $result_item = false;
+
+				// decrease stock warehouse out
+        $this->load->model('tmp_shop_stock_model','',TRUE);
+        $sql = "stob_id = '".$item[$i]["stob_id"]."'";
+        $query = $this->tmp_shop_stock_model->getWarehouse_transfer($sql);
+
+        $qty_update = $item[$i]["qty"];
+
+        if (!empty($query)) {
+            foreach($query as $loop) {
+                $qty_new = $loop->stob_qty - $qty_update;
+                $stock = array( 'id' => $loop->stob_id,
+                                'stob_qty' => $qty_new,
+                                'stob_lastupdate' => $datetime_now,
+                                'stob_lastupdate_by' => $user_id,
+                            );
+                $query = $this->tmp_shop_stock_model->editWarehouse_transfer($stock);
+                break;
+            }
+        }
+
+				// edit serial
+        if ($serial == 1) {
+            $serial_item = array( 'id' => $item[$i]["serial_id"],
+                                  'itse_enable' => 0,
+																	'itse_dateadd' => $datetime_now,
+                                );
+            $query = $this->item_model->editItemSerial($serial_item);
+
+        }
+
 			}
 		}
 		//------------------------------------------------------
@@ -178,13 +211,14 @@ class Pos_payment extends CI_Controller {
 
 		$data['title'] = programname.version." - Today Payment";
 		$data['content_header'] = "นาฬิกา > สั่งขาย > การสั่งขายของวันนี้";
-		$this->load->view('POS/time/main_time_today_payment', $data);
+		$this->load->view('POS/tmp_time/main_time_today_payment', $data);
 	}
 
 	function void_payment()
 	{
 		$payment_id = $this->uri->segment(3);
 		$remark = $this->input->post("remarkvoid");
+		$shop_id = $this->session->userdata('sessshopid');
 
 		$where = "posp_id = '".$payment_id."'";
 		$this->load->model('pos_payment_model','',TRUE);
@@ -229,6 +263,58 @@ class Pos_payment extends CI_Controller {
 
 		// ----
 		// Return to stock
+		// increase stock warehouse out
+		$this->load->model('shop_model','',TRUE);
+		$where = "posh_id = '".$shop_id."'";
+		$result = $this->shop_model->get_warehouse_shop($where);
+		foreach ($result as $loop) { $warehouse_id = $loop->wh_id; }
+
+		$where = "";
+		$where .= "popi_posp_id = '".$payment_id."'";
+
+		$this->load->model('pos_payment_model','',TRUE);
+		$payment_array = $this->pos_payment_model->get_time_item_payment($where);
+		foreach ($payment_array as $loop) {
+			$item_id = $loop->popi_item_id;
+			$serial_number = $loop->popi_item_serial;
+
+			$this->load->model('tmp_shop_stock_model','',TRUE);
+			$sql = "stob_item_id = '".$item_id."' and stob_warehouse_id = '".$warehouse_id."'";
+			$query = $this->tmp_shop_stock_model->getWarehouse_transfer($sql);
+
+			$qty_update = $loop->popi_item_qty;
+
+			if (!empty($query)) {
+					foreach($query as $loop) {
+							$qty_new = $loop->stob_qty + $qty_update;
+							$stock = array( 'id' => $loop->stob_id,
+															'stob_qty' => $qty_new,
+															'stob_lastupdate' => $datetime_now,
+															'stob_lastupdate_by' => $user_id,
+													);
+							$query = $this->tmp_shop_stock_model->editWarehouse_transfer($stock);
+							break;
+					}
+			}
+			// edit serial
+			if ($serial_number != "") {
+					$where = "itse_serial_number = '".$serial_number."'";
+					$this->load->model('item_model','',TRUE);
+					$query_serial = $this->item_model->get_time_serial($where);
+					foreach($query_serial as $loop) { $serial_id = $loop->itse_id; }
+					$serial_item = array( 'id' => $serial_id,
+																'itse_enable' => 1,
+																'itse_dateadd' => $datetime_now,
+															);
+					$query = $this->item_model->editItemSerial($serial_item);
+			}
+		}
+
+
+
+
+
+
 		// ----
 
 		redirect('pos_payment/view_payment/'.$payment_id, 'refresh');

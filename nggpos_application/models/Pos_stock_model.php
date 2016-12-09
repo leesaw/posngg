@@ -1,5 +1,5 @@
 <?php
-Class Shop_model extends CI_Model
+Class Pos_stock_model extends CI_Model
 {
   function get_shop($where)
   {

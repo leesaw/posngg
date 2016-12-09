@@ -22,10 +22,13 @@
     <!-- Main content -->
     <section class="content">
       <div class="row">
-        <div class="col-md-4">
+        <div class="col-md-1">
+        </div>
+
+        <div class="col-md-5">
           <div class="box box-solid">
             <div class="box-body">
-              <a href="<?php echo site_url("Pos_time_sale/form_sale_order"); ?>">
+              <a href="<?php echo site_url("tmp_pos_time_sale/form_refcode"); ?>">
         	    <div class="thumbnail">
         	      <img src="<?php echo base_url(); ?>asset/dist/img/watch.png" style="width: 200px; padding:5px;">
         	      <div class="caption">
@@ -39,14 +42,14 @@
           <!-- /.box -->
         </div>
         <!-- ./col -->
-        <div class="col-md-4">
+        <div class="col-md-5">
           <div class="box box-solid">
             <div class="box-body">
-              <a href="<?php echo site_url("pos_main/jewe_main"); ?>">
+              <a href="<?php echo site_url("tmp_pos_time_sale/form_serial"); ?>">
         	    <div class="thumbnail">
-        	      <img src="<?php echo base_url(); ?>asset/dist/img/jewelry.png" style="width: 200px; padding:5px;">
+        	      <img src="<?php echo base_url(); ?>asset/dist/img/logo_suunto.png" style="width: 200px; padding:5px;">
         	      <div class="caption">
-        	        <h3><center>จิวเวอรี่</center></h3>
+        	        <h3><center>เฉพาะ Suunto</center></h3>
         	      </div>
         	    </div>
         	    </a>
@@ -55,8 +58,11 @@
           </div>
           <!-- /.box -->
         </div>
+
+        <div class="col-md-1">
+        </div>
         <!-- ./col -->
-        <div class="col-md-4">
+        <!-- <div class="col-md-4">
           <div class="box box-solid">
             <div class="box-body">
               <a href="<?php echo site_url("pos_main/gold_main"); ?>">
@@ -68,10 +74,8 @@
         	    </div>
         	    </a>
             </div>
-            <!-- /.box-body -->
           </div>
-          <!-- /.box -->
-        </div>
+        </div> -->
         <!-- ./col -->
       </div>
       <!-- /.row -->

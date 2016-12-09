@@ -291,7 +291,10 @@ function RemoveRougeChar(convertString){
           $("#btnComplete").prop('disabled', true);
 
           var item_id = document.getElementsByName('it_id');
+          var stob_id = document.getElementsByName('stob_id');
           var item_barcode = document.getElementsByName('it_barcode');
+          var old_qty = document.getElementsByName('old_qty');
+          var serial_id = document.getElementsByName('serial_id');
           var srp = document.getElementsByName('it_srp');
           var qty = document.getElementsByName('it_quantity');
           var dc = document.getElementsByName('it_discount');
@@ -303,15 +306,55 @@ function RemoveRougeChar(convertString){
 
           // create item array
           var item_array = new Array();
+          var it_array = new Array();
           var paid = new Array();
           var total_net = 0;
           var total_dc = 0;
           var total_tax = 0;
+
+          var index = 0;
+          var checked = 0;
+
+          // sum qty
+          if (serial == 0) {
+            // sum qty
+            for(var i=0; i<item_id.length; i++){
+
+              for(var j=0; j<index; j++) {
+                  if (item_id[i].value == it_array[j]['id']) {
+                      it_array[j]['qty'] = parseInt(it_array[j]['qty']) + parseInt(qty[i].value);
+  										if (it_array[j]['qty'] > it_array[j]['old_qty']) {
+  											alert("จำนวนสินค้าคงเหลือไม่เพียงพอกับที่ต้องการ !!");
+  	                    return;
+  										}
+                      checked++;
+                  }
+              }
+              if (checked==0) {
+                  it_array[index] = {id: item_id[i].value, qty: qty[i].value, old_qty: old_qty[i].value};
+                  index++;
+              }else{
+                  checked = 0;
+              }
+            }
+          }else{
+            for(var i=0; i<serial_id.length; i++) {
+              for(var j=i+1; j<serial_id.length; j++) {
+                if (serial_id[i].value == serial_id[j].value) {
+                  alert("Serial Number ซ้ำกัน !!");
+                  return;
+                }
+              }
+            }
+          }
+
           for(var i=0; i<item_id.length; i++) {
             total_net += parseFloat((net[i].value).replace(/,/g, ''));
             total_dc += parseFloat((dc[i].value).replace(/,/g, ''));
             item_array[i] = {  id: item_id[i].value,
+                              stob_id: stob_id[i].value,
                               barcode: item_barcode[i].value,
+                              serial_id: serial_id[i].value,
                               srp: (srp[i].value).replace(/,/g, ''),
                               qty: qty[i].value,
                               dc_baht: (dc[i].value).replace(/,/g, ''),
@@ -341,7 +384,7 @@ function RemoveRougeChar(convertString){
           $.ajax({
     				type : "POST" ,
     				url : link_save_payment ,
-    				data : {item: item_array, payment: payment, paid: paid} ,
+    				data : {item: item_array, payment: payment, paid: paid, serial: serial} ,
     				success : function(data) {
     					if(data > 0)
     					{
@@ -369,11 +412,10 @@ function RemoveRougeChar(convertString){
     	if(barcode != "") {
   			$.ajax({
   				type : "POST" ,
-  				url : link ,
-  				data : {barcode: barcode} ,
+  				url : link_check ,
+  				data : {barcode: barcode, shop_id: shop_id, serial: serial} ,
   				success : function(data) {
-  					if(data != "")
-  					{
+  					if(data != "") {
   	            var element = '<tr id="row'+count_enter_form_input_product+'"><td><button type="button" id="row'+count_enter_form_input_product+'" class="btn btn-danger btn-xs" onClick="delete_item_row('+count_enter_form_input_product+');"><i class="fa fa-close"></i></button></td>'+data+'</tr>';
   	            $('#itemlist > tbody').append(element);
   	            count_enter_form_input_product++;
@@ -382,7 +424,8 @@ function RemoveRougeChar(convertString){
                           calculate();
                       },300);
   	        }else{
-  	        	alert("ไม่พบ Barcode ที่ต้องการ");
+              if (serial == 0) alert("ไม่พบ Ref. Number ที่ต้องการ");
+              else alert("ไม่พบ Serial Number ที่ต้องการ");
   	        }
   				},
           error: function (textStatus, errorThrown) {

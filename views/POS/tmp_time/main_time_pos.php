@@ -93,7 +93,7 @@
               </div>
               <div class='row'>
                 <div class='col-md-12'>
-                  <a data-toggle="modal" data-target="#modAllPercent" type="button" class="btn bg-orange" name="btnAllPercent" id="btnAllPercent">ส่วนลด % ทุกชิ้น</a>
+                  <a data-toggle="modal" data-target="#modAllPercent" type="button" class="btn bg-orange" name="btnAllPercent" id="btnAllPercent">ส่วนลด % ทุกชิ้น</a>	&nbsp;	&nbsp;
                   <a data-toggle="modal" data-target="#modDCTopup" type="button" class="btn btn-danger" name="btnDCTopup" id="btnDCTopup">ส่วนลดท้ายบิล</a>
                 </div>
               </div>

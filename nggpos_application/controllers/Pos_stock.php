@@ -36,12 +36,12 @@ class Pos_stock extends CI_Controller {
     $sql = "br_id != '888'";
     $sql .= " and wh_id = '".$warehouse."'";
 
-		$sql_serial = "(select itse_item_id,itse_warehouse_id, GROUP_CONCAT(itse_serial_number) as serialnumber from tp_item_serial
-		where tp_item_serial.itse_warehouse_id='1009' and itse_enable=1 group by itse_item_id) tt";
+		$sql_serial = "(select itse_item_id,itse_warehouse_id, GROUP_CONCAT(itse_serial_number SEPARATOR '<br>') as serialnumber from tp_item_serial
+		where tp_item_serial.itse_warehouse_id='".$warehouse."' and itse_enable=1 group by itse_item_id) tt";
 
     $this->load->library('Datatable');
     $this->datatable
-    ->select("it_refcode, br_name, CONCAT(it_model,'<br>',it_short_description) as description, it_srp, stob_qty, REPLACE(serialnumber, ',', '<br>') as serial")
+    ->select("it_refcode, br_name, CONCAT(it_model,'<br>',it_short_description) as description, it_srp, stob_qty, serialnumber")
     ->from('tp_stock_balance')
     ->join('tp_warehouse', 'wh_id = stob_warehouse_id','left')
     ->join('tp_item', 'it_id = stob_item_id','left')

@@ -37,7 +37,7 @@
                   <table class='table table-bordered' id='paymentlist'>
                     <thead>
                       <th class='col-xs-1' style='text-align:center;'><i class="fa fa-search"></i></th>
-                      <th class='col-xs-1'>เลขที่</th>
+                      <th class='col-xs-2'>เลขที่</th>
                       <th class='col-xs-1'>วันที่</th>
                       <th class='col-xs-2'>สาขา</th>
                       <th class='col-xs-1'>พนักงานขาย</th>
@@ -45,14 +45,14 @@
                       <th class='col-xs-1'>รวมส่วนลด</th>
                       <th class='col-xs-1'>ส่วนลดท้ายบิล</th>
                       <th class='col-xs-1'>ภาษีมูลค่าเพิ่ม</th>
-                      <th class='col-xs-2'>รวมยอดเงิน (รวมภาษี)</th>
+                      <th class='col-xs-1'>รวมยอดเงิน<br>(รวมภาษี)</th>
 
                     </thead>
                     <tbody>
                       <?php $no = 0; foreach($payment_array as $loop) { ?>
                       <tr>
                         <td style='text-align:center;'><a type="button" class="btn btn-xs btn-primary" id="btnView" href="<?php echo site_url("pos_payment/view_payment")."/".$loop->posp_id; ?>"><i class="fa fa-search"></i></a></td>
-                        <td><?php echo $loop->posp_small_invoice_number; ?></td>
+                        <td><?php echo $loop->posp_small_invoice_number; if ($loop->posp_status == 'V') echo " <button class='btn btn-xs btn-danger'>ยกเลิก(Void)</button>"; ?></td>
                         <td><?php echo $loop->posp_issuedate; ?></td>
                         <td><?php echo $loop->posp_shop_name; ?></td>
                         <td><?php echo $loop->nggu_firstname; ?></td>
@@ -68,7 +68,7 @@
                       <?php } ?>
                     </tbody>
                     <tfoot>
-                      
+
                     </tfoot>
                   </table>
                 </div>

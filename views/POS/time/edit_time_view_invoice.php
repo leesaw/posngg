@@ -68,7 +68,8 @@
             </div>
             <div class="box-body">
               <div class='row'>
-                <div class='col-md-6'>
+                <div class='col-md-4'>
+                  <input type='hidden' name='inv_id' id='inv_id' value='<?php echo $inv_id; ?>'/>
                   <?php echo $shop_company."<br/>".$shop_address1."<br/>".$shop_address2."<br/>Tax ID. ".$shop_taxid." ";
                   if ($shop_branch_no == 0) echo "Head Office";
                   else if ($shop_branch_no > 0) echo "Branch No. ".str_pad($shop_branch_no, 5, '0', STR_PAD_LEFT);
@@ -78,8 +79,26 @@
 
                   ?>
                 </div>
-                <div class='col-md-6'>
-                  <?php echo $cus_name."<br/>".$cus_address."<br/>Tax ID. ".$cus_taxid; ?>
+                <div class='col-md-8'>
+                  <div class='row'>
+                    <div class='col-md-12'>
+                      <label>ชื่อ-นามสกุลลูกค้า</label>
+                      <input type='text' class='form-control' name='cusName' id='cusName' value='<?php echo $cus_name; ?>'/>
+                    </div>
+                  </div>
+                  <div class='row'>
+                    <div class='col-md-12'>
+                      <label>ที่อยู่ลูกค้า</label>
+                      <input type='text' class='form-control' name='cusAddress' id='cusAddress' value='<?php echo $cus_address; ?>'/>
+                    </div>
+                  </div>
+                  <div class='row'>
+                    <div class='col-md-12'>
+                      <label>เลขที่ผู้เสียภาษี / Passport</label>
+                      <input type='text' class='form-control' name='cusTaxID' id='cusTaxID' value='<?php echo $cus_taxid; ?>'/>
+                    </div>
+                  </div>
+                  <?php //echo $cus_name."<br/>".$cus_address."<br/>Tax ID. ".$cus_taxid; ?>
                 </div>
               </div>
               <br/>
@@ -151,13 +170,10 @@
         </div>
 
         <div class='col-md-2'>
-
-            <?php if ($inv_status == 'N') { ?><a href="<?php echo site_url("pos_invoice/print_invoice")."/".$inv_id; ?>" target="_blank" type="button" class="btn btn-primary btn-lg btn-block" name="btnInvoice" id="btnInvoice">พิมพ์ใบกำกับภาษี</a><?php } ?>
-
-          <br/><br/>
-          <?php if ($inv_status == 'N' && $today == $issue) { ?><a type="button" href='<?php echo site_url('pos_invoice/form_edit_invoice')."/".$inv_id; ?>' class="btn btn-warning btn-lg btn-block" name="btnEdit" id="btnEdit"><i class="fa fa-pencil"></i> แก้ไขข้อมูลลูกค้า<br>ใบกำกับภาษี</a><?php } ?>
-          <br/><br/>
-          <?php if ($inv_status == 'N' && $today == $issue) { ?><a type="button" href='<?php echo site_url('pos_invoice/void_invoice')."/".$inv_id; ?>' class="btn btn-danger btn-lg btn-block" name="btnVoid" id="btnVoid"><i class="fa fa-ban"></i> ยกเลิก (Void)<br>ใบกำกับภาษี</a><?php } ?>
+          <br><br><br><br>
+          <button class='btn btn-lg btn-block btn-primary' id='btnSave'><i class='fa fa-save'></i> บันทึกแก้ไข</button>
+          <br><br><br>
+          <a type='button' href='<?php echo site_url('pos_invoice/view_invoice').'/'.$inv_id; ?>' class='btn btn-lg btn-block btn-warning' id='btnCancel'><i class='fa fa-reply'></i> ยกเลิกแก้ไข</a>
         </div>
       </div>
       <!-- /.row -->
@@ -175,7 +191,8 @@
 <!-- View Sale Order Function -->
 <script src="<?php echo base_url(); ?>asset/custom/js/view_invoice.min.js"></script>
 <script>
-
+var link_edit_invoice = '<?php echo site_url('pos_invoice/edit_invoice_save'); ?>';
+var link_view_invoice = '<?php echo site_url('pos_invoice/view_invoice').'/'.$inv_id; ?>';
 </script>
 </body>
 </html>

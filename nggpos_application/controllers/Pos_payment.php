@@ -229,7 +229,7 @@ class Pos_payment extends CI_Controller {
 		$payment_temp = array(
 			"id" => $payment_id,
 			"posp_status" => 'V',
-			"posp_enable" => 0,
+			"posp_enable" => 1,
 			"posp_updatedate" => $datetime_now,
 			"posp_update_by" => $user_id,
 			"posp_remark" => $remark,
@@ -256,7 +256,7 @@ class Pos_payment extends CI_Controller {
 				"posp_dateadd_by" => $loop->posp_dateadd_by,
 				"posp_shop_id" => $loop->posp_shop_id,
 				"posp_shop_name" => $loop->posp_shop_name,
-				"posp_enable" => 0,
+				"posp_enable" => 1,
 			);
 		}
 		$log_id = $this->pos_payment_model->insert_log_new_payment($temp);

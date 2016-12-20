@@ -364,6 +364,7 @@ function RemoveRougeChar(convertString){
           }
 
           total_tax = (total_net - dc_topup)*0.07/1.07;
+          // total_net -= dc_topup;
           var payment = { paymentRemark: $("#paymentRemark").val(),
                           customer_id: $("#customer_id").val(),
                           saleperson_id: $("#saleperson_id").val(),

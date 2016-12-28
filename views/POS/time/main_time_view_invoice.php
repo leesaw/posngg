@@ -151,13 +151,13 @@
         </div>
 
         <div class='col-md-2'>
-
+            <form action="<?php echo site_url('pos_invoice/void_invoice')."/".$inv_id; ?>" method="post" name="frmVoid" id ="frmVoid"><input type="hidden" name="remarkvoid" id="remarkvoid" value=""></form>
             <?php if ($inv_status == 'N') { ?><a href="<?php echo site_url("pos_invoice/print_invoice")."/".$inv_id; ?>" target="_blank" type="button" class="btn btn-primary btn-lg btn-block" name="btnInvoice" id="btnInvoice">พิมพ์ใบกำกับภาษี</a><?php } ?>
 
           <br/><br/>
           <?php if ($inv_status == 'N' && $today == $issue) { ?><a type="button" href='<?php echo site_url('pos_invoice/form_edit_invoice')."/".$inv_id; ?>' class="btn btn-warning btn-lg btn-block" name="btnEdit" id="btnEdit"><i class="fa fa-pencil"></i> แก้ไขข้อมูลลูกค้า<br>ใบกำกับภาษี</a><?php } ?>
           <br/><br/>
-          <?php if ($inv_status == 'N' && $today == $issue) { ?><a type="button" href='<?php echo site_url('pos_invoice/void_invoice')."/".$inv_id; ?>' class="btn btn-danger btn-lg btn-block" name="btnVoid" id="btnVoid"><i class="fa fa-ban"></i> ยกเลิก (Void)<br>ใบกำกับภาษี</a><?php } ?>
+          <?php if ($inv_status == 'N' && $today == $issue) { ?><a type="button" class="btn btn-danger btn-lg btn-block" name="btnVoid" id="btnVoid"><i class="fa fa-ban"></i> ยกเลิก (Void)<br>ใบกำกับภาษี</a><?php } ?>
         </div>
       </div>
       <!-- /.row -->

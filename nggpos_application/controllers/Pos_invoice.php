@@ -279,16 +279,15 @@ class Pos_invoice extends CI_Controller {
 	function void_invoice()
 	{
 		$invoice_id = $this->uri->segment(3);
-		$invoice_temp = array("id" => $invoice_id, "pinv_status" => 'V', "pinv_enable" => 0, "pinv_updatedate" => $datetime_now, "pinv_update_by" => $user_id);
-
-		$this->load->model('pos_invoice_model','',TRUE);
-		$this->pos_invoice_model->edit_invoice($invoice_temp);
-
-		$where = "pinv_id = '".$invoice_id."'";
-		$result = $this->pos_invoice_model->get_invoice($where);
+		$remark = $this->input->post("remarkvoid");
 		$datetime_now = date("Y-m-d H:i:s");
     $user_id = $this->session->userdata('sessid');
+
+		$where = "pinv_id = '".$invoice_id."'";
+		$this->load->model('pos_invoice_model','',TRUE);
+		$result = $this->pos_invoice_model->get_invoice($where);
 		foreach($result as $loop) {
+			$remark = $loop->pinv_remark."#VOID#".$remark;
 			$temp = array(
 				"pinv_id" => $invoice_id,
 				"pinv_updatedate" => $datetime_now,
@@ -303,7 +302,7 @@ class Pos_invoice extends CI_Controller {
 				"pinv_invoice_number" => $loop->pinv_invoice_number,
 				"pinv_small_invoice_number" => $loop->pinv_small_invoice_number,
 				"pinv_status" => 'V',
-				"pinv_remark" => $loop->pinv_remark,
+				"pinv_remark" => $remark,
 				"pinv_dateadd" => $loop->pinv_dateadd,
 				"pinv_dateadd_by" => $loop->pinv_dateadd_by,
 				"pinv_shop_id" => $loop->pinv_shop_id,
@@ -320,12 +319,30 @@ class Pos_invoice extends CI_Controller {
 				"pinv_shop_fax" => $loop->pinv_shop_fax,
 				"pinv_shop_taxid" => $loop->pinv_shop_taxid,
 				"pinv_shop_branch_no" => $loop->pinv_shop_branch_no,
-				"pinv_enable" => 0,
+				"pinv_enable" => 1,
 			);
+			$payment_id = $loop->pinv_payment_id;
 		}
 		$log_id = $this->pos_invoice_model->insert_log_new_invoice($temp);
 
-		redirect('pos_invoice/view_invoice/'.$invoice_id, 'refresh');
+		$invoice_temp = array("id" => $invoice_id, "pinv_status" => 'V', "pinv_enable" => 1, "pinv_updatedate" => $datetime_now, "pinv_update_by" => $user_id, "pinv_remark" => $remark);
+
+
+		$this->pos_invoice_model->edit_invoice($invoice_temp);
+
+
+
+		// convert payment status T -> N
+		$payment_temp = array("id" => $payment_id,
+													"posp_status" => 'N',
+													"posp_updatedate" => $datetime_now,
+													"posp_update_by" => $user_id,
+												);
+		$this->load->model('pos_payment_model','',TRUE);
+		$this->pos_payment_model->edit_payment($payment_temp);
+
+
+		redirect('pos_payment/view_payment/'.$payment_id, 'refresh');
 	}
 
 	function print_invoice()
